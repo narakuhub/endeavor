@@ -3,7 +3,7 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
 local Success, UIModule = pcall(function()
-    return loadstring(game:HttpGet("https://raw.githubusercontent.com/yourusername/yourrepo/main/UI/UI.lua"))()
+    return loadstring(game:HttpGet("https://raw.githubusercontent.com/narakuhub/NARAKU/refs/heads/main/UI/UI.lua"))()
 end)
 
 if not Success or not UIModule then
