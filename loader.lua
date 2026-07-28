@@ -23,7 +23,7 @@ if not Success or not UIModule then
 end
 
 local SuccessMain, MainModule = pcall(function()
-    return loadstring(game:HttpGet("https://raw.githubusercontent.com/yourusername/yourrepo/main/UI/Main%20Panel.lua"))()
+    return loadstring(game:HttpGet("https://raw.githubusercontent.com/narakuhub/NARAKU/refs/heads/main/UI/MainPanel.lua"))()
 end)
 
 if SuccessMain and MainModule then
