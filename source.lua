@@ -681,10 +681,6 @@ LMG2L["UIGradient_4f"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.
 -- Compatible with LMG2L hardcoded table structure
 -- ====================================================================
 
--- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
--- CORE
--- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
 -- Services
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
@@ -805,25 +801,24 @@ end
 -- UTILITY
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
--- Universal Dragging System (Desktop & Touch Support)
+-- Universal Dragging System (Panel_3 & OpenButton_4c Support)
 local function EnableDrag()
+	-- 1. DRAG SYSTEM UNTUK PANEL_3 (Via Header)
 	Panel.Active = true
-	pcall(function()
-		Panel.Draggable = true
-	end)
+	pcall(function() Panel.Draggable = true end)
 	
-	local dragging = false
-	local dragInput, dragStart, startPos
+	local panelDragging = false
+	local panelDragInput, panelDragStart, panelStartPos
 
 	Header.InputBegan:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-			dragging = true
-			dragStart = input.Position
-			startPos = Panel.Position
+			panelDragging = true
+			panelDragStart = input.Position
+			panelStartPos = Panel.Position
 
 			input.Changed:Connect(function()
 				if input.UserInputState == Enum.UserInputState.End then
-					dragging = false
+					panelDragging = false
 				end
 			end)
 		end
@@ -831,19 +826,61 @@ local function EnableDrag()
 
 	Header.InputChanged:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-			dragInput = input
+			panelDragInput = input
 		end
 	end)
 
+	-- 2. DRAG SYSTEM UNTUK OPENBUTTON_4C
+	OpenButton.Active = true
+	pcall(function() OpenButton.Draggable = true end)
+
+	local btnDragging = false
+	local btnDragInput, btnDragStart, btnStartPos
+
+	OpenButton.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			btnDragging = true
+			btnDragStart = input.Position
+			btnStartPos = OpenButton.Position
+
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					btnDragging = false
+				end
+			end)
+		end
+	end)
+
+	OpenButton.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+			btnDragInput = input
+		end
+	end)
+
+	-- 3. GLOBAL INPUT MOVEMENT HANDLER
 	UserInputService.InputChanged:Connect(function(input)
-		if input == dragInput and dragging then
-			local delta = input.Position - dragStart
+		-- Move Panel
+		if input == panelDragInput and panelDragging then
+			local delta = input.Position - panelDragStart
 			TweenService:Create(Panel, TweenInfo.new(0.05, Enum.EasingStyle.Linear), {
 				Position = UDim2.new(
-					startPos.X.Scale,
-					startPos.X.Offset + delta.X,
-					startPos.Y.Scale,
-					startPos.Y.Offset + delta.Y
+					panelStartPos.X.Scale,
+					panelStartPos.X.Offset + delta.X,
+					panelStartPos.Y.Scale,
+					panelStartPos.Y.Offset + delta.Y
+				)
+			}):Play()
+		end
+
+		-- Move OpenButton
+		if input == btnDragInput and btnDragging then
+			local delta = input.Position - btnDragStart
+			TweenService:Create(OpenButton, TweenInfo.new(0.05, Enum.EasingStyle.Linear), {
+				Position = UDim2.new(
+					btnStartPos.X.Scale,
+					btnStartPos.X.Offset + delta.X,
+					btnStartPos.Y.Scale,
+					btnStartPos.Y.Offset + delta.Y
 				)
 			}):Play()
 		end
