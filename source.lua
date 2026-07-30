@@ -619,6 +619,195 @@ LMG2L["Background_47"]["Name"] = [[Background]];
 LMG2L["UICorner_48"] = Instance.new("UICorner", LMG2L["Background_47"]);
 LMG2L["UICorner_48"]["CornerRadius"] = UDim.new(0, 12);
 
+-- ====================================================================
+-- NARAKU UI MAIN PANEL SYSTEM (LOGIC ONLY)
+-- Author: Kaizen & Assistant
+-- Targeted Architecture: LMG2L hardcoded table structure
+-- ====================================================================
 
+-- Services
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local Lighting = game:GetService("Lighting")
+local UserInputService = game:GetService("UserInputService")
+local CoreGui = game:GetService("CoreGui")
+
+-- Variables & State
+local isMinimized = false
+local isDragging = false
+local dragInput, dragStart, startPos
+
+-- Tween Configurations
+local TWEEN_INFO_FAST = TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+local TWEEN_INFO_SMOOTH = TweenInfo.new(0.5, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
+
+-- Fetch UI Instances from target hierarchy
+local ScreenGui = LMG2L["ScreenGui_1"]
+local Panel = LMG2L["Panel_3"]
+local Header = LMG2L["Header_3d"]
+local MinimalButton = LMG2L["MinimalButton_3f"]
+local SearchBox = LMG2L["SearchBox_4"]
+local ScrollingTab = LMG2L["ScrollingTab_26"]
+local ScrollingFrame = LMG2L["ScrollingFrame_c"]
+local Imagebackground = LMG2L["Imagebackground_8"]
+local Background = LMG2L["Background_47"]
+local UIStroke = LMG2L["UIStroke_23"]
+local UIGradient = LMG2L["UIGradient_24"]
+
+-- Fetch or Create Single BlurEffect instance in Lighting
+local BlurEffect = Lighting:FindFirstChild("NarakuUI_Blur")
+if not BlurEffect then
+	BlurEffect = Instance.new("BlurEffect")
+	BlurEffect.Name = "NarakuUI_Blur"
+	BlurEffect.Size = 0
+	BlurEffect.Parent = Lighting
+end
+
+-- ====================================================================
+-- SYSTEM FUNCTIONS
+-- ====================================================================
+
+-- 1. Reparent ScreenGui to CoreGui
+local function ReparentToCoreGui()
+	ScreenGui.Parent = CoreGui
+end
+
+-- 2. Sync Heights for Panel and Background Layers
+local function UpdateBackground(targetHeight)
+	local targetSizePanel = UDim2.new(0, 270, 0, targetHeight)
+	local targetSizeBg = UDim2.new(0, 270, 0, targetHeight)
+	local targetSizeImageBg = UDim2.new(0, 270, 0, targetHeight)
+	
+	TweenService:Create(Panel, TWEEN_INFO_FAST, {Size = targetSizePanel}):Play()
+	TweenService:Create(Background, TWEEN_INFO_FAST, {Size = UDim2.new(0, 270, 0, math.max(0, targetHeight - 28))}):Play()
+	TweenService:Create(Imagebackground, TWEEN_INFO_FAST, {Size = targetSizeImageBg}):Play()
+end
+
+-- 3. Blur Management
+local function UpdateBlur(targetSize)
+	TweenService:Create(BlurEffect, TWEEN_INFO_FAST, {Size = targetSize}):Play()
+end
+
+-- 4. Content Visibility Control
+local function UpdateContent(visible)
+	SearchBox.Visible = visible
+	ScrollingTab.Visible = visible
+	ScrollingFrame.Visible = visible
+end
+
+-- 5. Panel Minimization
+local function MinimizePanel()
+	isMinimized = true
+	MinimalButton.Text = "+"
+	UpdateContent(false)
+	UpdateBackground(40)
+	UpdateBlur(0)
+end
+
+-- 6. Panel Restoration
+local function RestorePanel()
+	isMinimized = false
+	MinimalButton.Text = "-"
+	UpdateBackground(300)
+	UpdateBlur(18)
+	task.delay(0.1, function()
+		if not isMinimized then
+			UpdateContent(true)
+		end
+	end)
+end
+
+-- 7. Initial Entry Animation
+local function OpenPanel()
+	Panel.Position = UDim2.new(0, 40, 0, 25)
+	Panel.Size = UDim2.new(0, 0, 0, 0)
+	UpdateContent(false)
+	
+	TweenService:Create(Panel, TWEEN_INFO_SMOOTH, {Size = UDim2.new(0, 270, 0, 300)}):Play()
+	TweenService:Create(Background, TWEEN_INFO_SMOOTH, {Size = UDim2.new(0, 270, 0, 272)}):Play()
+	TweenService:Create(Imagebackground, TWEEN_INFO_SMOOTH, {Size = UDim2.new(0, 270, 0, 300)}):Play()
+	
+	UpdateBlur(18)
+	
+	task.delay(0.3, function()
+		if not isMinimized then
+			UpdateContent(true)
+		end
+	end)
+end
+
+-- 8. Continuous Rotating Border
+local function RotateStroke()
+	RunService.RenderStepped:Connect(function(deltaTime)
+		UIGradient.Rotation = (UIGradient.Rotation + (180 * deltaTime)) % 360
+	end)
+end
+
+-- 9. Universal Dragging Mechanism (Mouse & Touch Engine)
+local function EnableDrag()
+	Panel.Active = true
+	pcall(function()
+		Panel.Draggable = true
+	end)
+	
+	Header.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			isDragging = true
+			dragStart = input.Position
+			startPos = Panel.Position
+
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					isDragging = false
+				end
+			end)
+		end
+	end)
+
+	Header.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+			dragInput = input
+		end
+	end)
+
+	UserInputService.InputChanged:Connect(function(input)
+		if input == dragInput and isDragging then
+			local delta = input.Position - dragStart
+			TweenService:Create(Panel, TweenInfo.new(0.08, Enum.EasingStyle.Linear), {
+				Position = UDim2.new(
+					startPos.X.Scale,
+					startPos.X.Offset + delta.X,
+					startPos.Y.Scale,
+					startPos.Y.Offset + delta.Y
+				)
+			}):Play()
+		end
+	end)
+end
+
+-- 10. Event Wiring
+local function BindEvents()
+	MinimalButton.MouseButton1Click:Connect(function()
+		if isMinimized then
+			RestorePanel()
+		else
+			MinimizePanel()
+		end
+	end)
+end
+
+-- ====================================================================
+-- INITIALIZATION
+-- ====================================================================
+local function Init()
+	ReparentToCoreGui()
+	RotateStroke()
+	EnableDrag()
+	BindEvents()
+	OpenPanel()
+end
+
+-- Execute System
+Init()
 
 return LMG2L["ScreenGui_1"], require;
