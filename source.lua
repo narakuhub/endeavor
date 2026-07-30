@@ -937,7 +937,7 @@ end
 Init()
 
 -- ====================================================================
--- NARAKU SOURCE — LOGIC SYSTEM COMPLETE
+-- NARAKU SOURCE — LOGIC SYSTEM COMPLETE (FIXED JSON & CARD CLONE)
 -- TAB SYSTEM • SEARCH • CARD SYSTEM • EXPAND/COLLAPSE • EXECUTE & HTTP
 -- ====================================================================
 
@@ -966,26 +966,26 @@ local TabButtons = {
 	PLAYERS = LMG2L["PlayerButton_36"],
 }
 
--- Target Database URL
-local DATABASE_URL = "https://raw.githubusercontent.com/narakuhub/vetrou/refs/heads/main/script.json"
+-- Target Database URL (Valid Direct Raw URL)
+local DATABASE_URL = "https://raw.githubusercontent.com/narakuhub/vetrou/main/script.json"
 
 -- System State
-local ScriptDatabase = {}
 local ActiveCategory = "ALL"
 local ActiveCards = {}
-local OriginalCardSizes = {}
 
--- Hide and Disable Original Hardcode Template
-TemplateCard.Visible = false
+-- Hide Default Template Card
+if TemplateCard then
+	TemplateCard.Visible = false
+end
 
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
--- CARD & EXPAND/COLLAPSE SYSTEM
+-- HELPER & SEARCH ENGINE
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
--- Elements that strictly toggle visibility on Expand/Collapse
 local function SetCardContentVisible(card, isVisible)
+	if not card then return end
 	local targetNames = {
-		"Path", "JudulDesc", "Description", "Garis", "Output", "ExecuteButton"
+		"Path_10", "JudulDesc_21", "Description_11", "Garis_22", "Output_1d", "ExecuteButton_12"
 	}
 	for _, child in ipairs(card:GetChildren()) do
 		for _, name in ipairs(targetNames) do
@@ -996,12 +996,32 @@ local function SetCardContentVisible(card, isVisible)
 	end
 end
 
--- Setup Expand / Collapse Interactive Toggle
-local function SetupDropdownToggle(card)
-	local dropdownBtn = card:FindFirstChild("DropdownButton")
-	local iconDropdown = dropdownBtn and dropdownBtn:FindFirstChild("IconDropdown")
+local function FilterCards()
+	local query = string.lower(SearchBox and SearchBox.Text or "")
+	if query == "search script.." then query = "" end
 	
-	if not dropdownBtn or not iconDropdown then return end
+	for _, card in ipairs(ActiveCards) do
+		if card and card.Parent then
+			local cardCategory = card:GetAttribute("Category") or ""
+			local cardName = card:GetAttribute("ScriptName") or ""
+			
+			local categoryMatches = (ActiveCategory == "ALL") or (cardCategory == ActiveCategory)
+			local nameMatches = (query == "") or string.find(cardName, query, 1, true)
+			
+			card.Visible = (categoryMatches and nameMatches)
+		end
+	end
+end
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- INTERACTION MODULES
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+local function SetupDropdownToggle(card)
+	local dropdownBtn = card:FindFirstChild("DropdownButton_17")
+	local iconDropdown = dropdownBtn and dropdownBtn:FindFirstChild("IconDropdown_19")
+	
+	if not dropdownBtn then return end
 	
 	local isExpanded = false
 	SetCardContentVisible(card, false)
@@ -1010,69 +1030,62 @@ local function SetupDropdownToggle(card)
 	dropdownBtn.MouseButton1Click:Connect(function()
 		isExpanded = not isExpanded
 		
-		-- Animate Size & Arrow Rotation
 		local targetSize = isExpanded and UDim2.new(0, 261, 0, 160) or UDim2.new(0, 261, 0, 40)
 		local targetRotation = isExpanded and 180 or 0
 		
 		TweenService:Create(card, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = targetSize}):Play()
-		TweenService:Create(iconDropdown, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Rotation = targetRotation}):Play()
-		
-		-- Content Visibility Synchronization
-		if isExpanded then
-			SetCardContentVisible(card, true)
-		else
-			SetCardContentVisible(card, false)
+		if iconDropdown then
+			TweenService:Create(iconDropdown, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Rotation = targetRotation}):Play()
 		end
+		
+		SetCardContentVisible(card, isExpanded)
 	end)
 end
 
--- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
--- EXECUTE & ANIMATION SYSTEM
--- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
 local function SetupExecuteSystem(card, data)
-	local execBtn = card:FindFirstChild("ExecuteButton")
-	local iconExec = execBtn and execBtn:FindFirstChild("IconExecute")
-	local outputLabel = card:FindFirstChild("Output")
+	local execBtn = card:FindFirstChild("ExecuteButton_12")
+	local iconExec = execBtn and execBtn:FindFirstChild("IconExecute_14")
+	local outputLabel = card:FindFirstChild("Output_1d")
 	
-	if not execBtn or not iconExec or not outputLabel then return end
+	if not execBtn or not data or not data.url then return end
 	
-	local defaultOutput = outputLabel.Text
-	local defaultImage = iconExec.Image
+	local defaultOutput = outputLabel and outputLabel.Text or "[ SERVER ] READY"
+	local defaultImage = iconExec and iconExec.Image or ""
 	local isExecuting = false
 	
 	execBtn.MouseButton1Click:Connect(function()
 		if isExecuting then return end
 		isExecuting = true
 		
-		-- Loading Visuals & Rotation
-		iconExec.Image = "rbxassetid://10959947716"
-		outputLabel.Text = "[ SERVER ] GET " .. tostring(data.url)
+		if iconExec then iconExec.Image = "rbxassetid://10959947716" end
+		if outputLabel then outputLabel.Text = "[ SERVER ] GET " .. tostring(data.url) end
 		
 		local rotationConn
-		rotationConn = RunService.RenderStepped:Connect(function(dt)
-			iconExec.Rotation = (iconExec.Rotation + (360 * dt)) % 360
-		end)
+		if iconExec then
+			rotationConn = RunService.RenderStepped:Connect(function(dt)
+				iconExec.Rotation = (iconExec.Rotation + (360 * dt)) % 360
+			end)
+		end
 		
-		-- Run Remote Script Engine
 		task.spawn(function()
-			local success, err = pcall(function()
+			pcall(function()
 				local rawCode = game:HttpGet(data.url)
-				local loadedFunc = loadstring(rawCode)
-				if loadedFunc then
-					loadedFunc()
+				if rawCode and type(rawCode) == "string" then
+					local loadedFunc, loadErr = loadstring(rawCode)
+					if type(loadedFunc) == "function" then
+						loadedFunc()
+					else
+						warn("[NARAKU EXECUTE ERROR]: Syntax error in script ->", loadErr)
+					end
 				end
 			end)
 			
-			if not success then
-				warn("[NARAKU EXECUTE ERROR]:", err)
-			end
-			
-			-- Cleanup Animations
 			if rotationConn then rotationConn:Disconnect() end
-			iconExec.Rotation = 0
-			iconExec.Image = defaultImage
-			outputLabel.Text = defaultOutput
+			if iconExec then
+				iconExec.Rotation = 0
+				iconExec.Image = defaultImage
+			end
+			if outputLabel then outputLabel.Text = defaultOutput end
 			isExecuting = false
 		end)
 	end)
@@ -1083,119 +1096,13 @@ end
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 local function CreateCardFromData(data)
-	local newCard = TemplateCard:Clone()
-	newCard.Name = "Card_" .. tostring(data.name)
-	newCard.Parent = Container
-	newCard.Visible = true
+	if not TemplateCard or not data then return end
 	
-	-- Data Binding
-	if newCard:FindFirstChild("Name") then newCard.Name.Text = tostring(data.name or "Script Card") end
-	if newCard:FindFirstChild("Path") then newCard.Path.Text = tostring(data.path or "/UI/Source.lua") end
-	if newCard:FindFirstChild("Description") then newCard.Description.Text = tostring(data.description or "No description provided.") end
-	
-	-- Store Metadata
-	newCard:SetAttribute("Category", string.upper(tostring(data.category or "ALL")))
-	newCard:SetAttribute("ScriptName", string.lower(tostring(data.name or "")))
-	
-	-- Setup Modules
-	SetupDropdownToggle(newCard)
-	SetupExecuteSystem(newCard, data)
-	
-	table.insert(ActiveCards, newCard)
-	return newCard
-end
-
--- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
--- FILTER & SEARCH ENGINE
--- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-local function FilterCards()
-	local query = string.lower(SearchBox.Text)
-	if query == "search script.." then query = "" end
-	
-	for _, card in ipairs(ActiveCards) do
-		local cardCategory = card:GetAttribute("Category") or ""
-		local cardName = card:GetAttribute("ScriptName") or ""
-		
-		local categoryMatches = (ActiveCategory == "ALL") or (cardCategory == ActiveCategory)
-		local nameMatches = (query == "") or string.find(cardName, query, 1, true)
-		
-		if categoryMatches and nameMatches then
-			card.Visible = true
-		else
-			card.Visible = false
-		end
-	end
-end
-
--- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
--- TAB SYSTEM
--- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-local function SetActiveTab(targetCat, activeBtn)
-	ActiveCategory = targetCat
-	
-	-- Reset All Tab Styles
-	for cat, btn in pairs(TabButtons) do
-		btn.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
-		btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-	end
-	
-	-- Highlight Selected Tab
-	activeBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	activeBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
-	
-	FilterCards()
-end
-
-local function BindTabSystem()
-	for cat, btn in pairs(TabButtons) do
-		btn.MouseButton1Click:Connect(function()
-			SetActiveTab(cat, btn)
-		end)
-	end
-	-- Default Tab Setup
-	SetActiveTab("ALL", TabButtons.ALL)
-end
-
--- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
--- SEARCH SYSTEM
--- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-local function BindSearchSystem()
-	local PLACEHOLDER_TEXT = "Search Script.."
-	
-	SearchBox.Focused:Connect(function()
-		SearchStroke.Transparency = 0
-		if SearchBox.Text == PLACEHOLDER_TEXT then
-			SearchBox.Text = ""
-			SearchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-		end
-	end)
-	
-	SearchBox.FocusLost:Connect(function()
-		SearchStroke.Transparency = 0.5
-		if SearchBox.Text == "" then
-			SearchBox.Text = PLACEHOLDER_TEXT
-			SearchBox.TextColor3 = Color3.fromRGB(212, 212, 212)
-		end
-	end)
-	
-	SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
-		FilterCards()
-	end)
-end
-
--- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
--- CARD CLONING & BINDING (FIXED & FULLY SYNCHRONIZED)
--- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-local function CreateCardFromData(data)
 	local newCard = TemplateCard:Clone()
 	newCard.Name = "Card_" .. tostring(data.name or "Script")
 	newCard.Parent = Container
 	
-	-- Gunakan nama Instance spesifik beserta suffix nomornya!
+	-- Strict Hardcode Name Mapping
 	local labelName = newCard:FindFirstChild("Name_20")
 	local labelPath = newCard:FindFirstChild("Path_10")
 	local labelDesc = newCard:FindFirstChild("Description_11")
@@ -1204,18 +1111,16 @@ local function CreateCardFromData(data)
 	if labelPath then labelPath.Text = tostring(data.path or "/UI/Source.lua") end
 	if labelDesc then labelDesc.Text = tostring(data.description or "No description provided.") end
 	
-	-- Paksa Category menjadi Uppercase agar cocok dengan Tab System
+	-- UpperCase Handling For Seamless Category Matching
 	local rawCategory = tostring(data.category or "ALL"):upper()
 	newCard:SetAttribute("Category", rawCategory)
 	newCard:SetAttribute("ScriptName", string.lower(tostring(data.name or "")))
 	
-	-- Setup Interaction Modules
 	SetupDropdownToggle(newCard)
 	SetupExecuteSystem(newCard, data)
 	
 	table.insert(ActiveCards, newCard)
 	
-	-- Tentukan Visibility langsung berdasarkan Tab Aktif saat ini
 	if ActiveCategory == "ALL" or ActiveCategory == rawCategory then
 		newCard.Visible = true
 	else
@@ -1226,16 +1131,26 @@ local function CreateCardFromData(data)
 end
 
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
--- DATABASE PARSER & POPULATE (FIXED HTTP URL)
+-- DATABASE PARSER & POPULATE
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
--- Ganti URL ini dengan URL GitHub Raw yang VALID (Tanpa refs/heads):
-local DATABASE_URL = "https://raw.githubusercontent.com/narakuhub/vetrou/main/script.json"
+local function ProcessScriptItems(itemsList, categoryName)
+	if type(itemsList) ~= "table" then return end
+	for _, item in ipairs(itemsList) do
+		if type(item) == "table" then
+			item.category = categoryName
+			CreateCardFromData(item)
+		end
+	end
+end
 
 local function FetchDatabase()
 	task.spawn(function()
+		-- Bypass HTTP Cache
+		local bypassUrl = DATABASE_URL .. "?t=" .. tostring(tick())
+		
 		local success, response = pcall(function()
-			return game:HttpGet(DATABASE_URL)
+			return game:HttpGet(bypassUrl)
 		end)
 		
 		if success and response then
@@ -1243,24 +1158,25 @@ local function FetchDatabase()
 				return HttpService:JSONDecode(response)
 			end)
 			
-			if decodeSuccess and decodedData then
-				if decodedData.Category then
+			if decodeSuccess and type(decodedData) == "table" then
+				if decodedData.Category and type(decodedData.Category) == "table" then
 					for catName, items in pairs(decodedData.Category) do
 						ProcessScriptItems(items, catName)
 					end
-				elseif type(decodedData) == "table" and #decodedData > 0 then
+				elseif #decodedData > 0 then
 					for _, item in ipairs(decodedData) do
-						CreateCardFromData(item)
+						if type(item) == "table" then
+							CreateCardFromData(item)
+						end
 					end
 				end
+				FilterCards()
 			else
-				warn("[NARAKU ERROR]: Gagal decode JSON! Cek format script.json kamu.")
+				warn("[NARAKU ERROR]: Failed to decode JSON response.")
 			end
 		else
-			warn("[NARAKU ERROR 404]: File script.json tidak ditemukan di GitHub URL!")
+			warn("[NARAKU ERROR]: Failed to fetch script.json database.")
 		end
-		
-		FilterCards()
 	end)
 end
 
@@ -1268,9 +1184,63 @@ end
 -- INITIALIZATION
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+local function SetActiveTab(targetCat, activeBtn)
+	ActiveCategory = targetCat
+	
+	for cat, btn in pairs(TabButtons) do
+		if btn then
+			btn.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
+			btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+		end
+	end
+	
+	if activeBtn then
+		activeBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		activeBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
+	end
+	
+	FilterCards()
+end
+
 local function InitSystem()
-	BindTabSystem()
-	BindSearchSystem()
+	-- Bind Tabs
+	for cat, btn in pairs(TabButtons) do
+		if btn then
+			btn.MouseButton1Click:Connect(function()
+				SetActiveTab(cat, btn)
+			end)
+		end
+	end
+	
+	-- Bind Search
+	if SearchBox then
+		local PLACEHOLDER = "Search Script.."
+		SearchBox.Focused:Connect(function()
+			if SearchStroke then SearchStroke.Transparency = 0 end
+			if SearchBox.Text == PLACEHOLDER then
+				SearchBox.Text = ""
+				SearchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+			end
+		end)
+		
+		SearchBox.FocusLost:Connect(function()
+			if SearchStroke then SearchStroke.Transparency = 0.5 end
+			if SearchBox.Text == "" then
+				SearchBox.Text = PLACEHOLDER
+				SearchBox.TextColor3 = Color3.fromRGB(212, 212, 212)
+			end
+		end)
+		
+		SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
+			FilterCards()
+		end)
+	end
+	
+	-- Default Tab
+	if TabButtons.ALL then
+		SetActiveTab("ALL", TabButtons.ALL)
+	end
+	
 	FetchDatabase()
 end
 
