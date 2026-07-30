@@ -2,38 +2,40 @@
   "Category": {
     "Chaos": [
       {
-        "name": "CHAOS CONTROL V1",
-        "path": "/Source/ChaosControl.lua",
-        "description": "Script chaos universal untuk eksperimen server dan manipulasi fisika dasar.",
-        "url": "https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source",
-        "category": "Chaos"
+        "name": "Chaos Hub Main",
+        "path": "/Chaos/Main.lua",
+        "description": "Script chaos universal untuk auto farm dan trolling mode.",
+        "url": "https://raw.githubusercontent.com/narakuhub/vetrou/refs/heads/main/scripts/chaos.lua"
       }
     ],
     "Utility": [
       {
-        "name": "INFINITE YIELD",
-        "path": "/Admin/InfiniteYield.lua",
-        "description": "Admin command paling populer dengan ratusan fitur utility server.",
-        "url": "https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source",
-        "category": "Utility"
+        "name": "Infinite Yield",
+        "path": "/Utility/IY.lua",
+        "description": "Admin command paling populer dan lengkap untuk Roblox.",
+        "url": "https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"
+      },
+      {
+        "name": "Dex Explorer",
+        "path": "/Utility/Dex.lua",
+        "description": "Instance viewer dan explorer tool untuk debugging game.",
+        "url": "https://raw.githubusercontent.com/infypred/dex/main/dex.lua"
       }
     ],
     "Plugin": [
       {
-        "name": "DEX EXPLORER",
-        "path": "/Tools/DexExplorer.lua",
-        "description": "Inspector hierarchy instance game Roblox untuk debugging & reverse engineering.",
-        "url": "https://raw.githubusercontent.com/infypredator/infypredator/main/dex.lua",
-        "category": "Plugin"
+        "name": "Simple Spy",
+        "path": "/Plugin/Spy.lua",
+        "description": "Remote event & function logger untuk analisis network.",
+        "url": "https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/CustomModules/6872274481.lua"
       }
     ],
     "Players": [
       {
-        "name": "FLY & SPEED HUB",
-        "path": "/Player/Movement.lua",
-        "description": "Kumpulan fitur dasar movement seperti Fly, Speed, Noclip, dan JumpPower.",
-        "url": "https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source",
-        "category": "Players"
+        "name": "Fly & Noclip Script",
+        "path": "/Players/Movement.lua",
+        "description": "Memberikan kemampuan terbang dan menembus dinding pada karakter.",
+        "url": "https://raw.githubusercontent.com/narakuhub/vetrou/refs/heads/main/scripts/fly.lua"
       }
     ]
   }
