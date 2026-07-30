@@ -937,217 +937,193 @@ end
 Init()
 
 -- ====================================================================
--- NARAKU SOURCE — LOGIC UTAMA
--- (SCROLLING TAB • SEARCH • CARD SYSTEM • SCRIPT.JSON)
+-- NARAKU SOURCE — LOGIC SYSTEM COMPLETE
+-- TAB SYSTEM • SEARCH • CARD SYSTEM • EXPAND/COLLAPSE • EXECUTE & HTTP
 -- ====================================================================
 
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
--- CORE
+-- CORE & SERVICES
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
--- Services
 local HttpService = game:GetService("HttpService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 
--- Reference Objects (Hierarchy LMG2L Asli)
+-- Direct Hierarchy References
+local Panel = LMG2L["Panel_3"]
 local SearchBox = LMG2L["SearchBox_4"]
-local UIStroke_Search = LMG2L["UIStroke_7"]
+local SearchStroke = LMG2L["UIStroke_7"]
 local ScrollingTab = LMG2L["ScrollingTab_26"]
-local ScrollingFrame = LMG2L["ScrollingFrame_c"]
+local Container = LMG2L["ScrollingFrame_c"]
+local TemplateCard = LMG2L["Card_f"]
 
--- Template Card
-local CardTemplate = LMG2L["Card_f"]
-CardTemplate.Visible = false -- Sembunyikan template asli
-
--- Reference Buttons & Frames Tab
+-- Tab Buttons Mapping
 local TabButtons = {
-	{ Frame = LMG2L["SemuaFrame_39"], Button = LMG2L["SemuaButton_3a"], Category = "Semua" },
-	{ Frame = LMG2L["ChaosFrame_28"], Button = LMG2L["ChaosButton_2a"], Category = "Chaos" },
-	{ Frame = LMG2L["UtulityFrame_2c"], Button = LMG2L["UtulityButton_2d"], Category = "Utility" },
-	{ Frame = LMG2L["PluginFrame_30"], Button = LMG2L["PluginButton_32"], Category = "Plugin" },
-	{ Frame = LMG2L["PlayerFrame_35"], Button = LMG2L["PlayerButton_36"], Category = "Players" },
+	ALL = LMG2L["SemuaButton_3a"],
+	CHAOS = LMG2L["ChaosButton_2a"],
+	UTILITY = LMG2L["UtulityButton_2d"],
+	PLUGIN = LMG2L["PluginButton_32"],
+	PLAYERS = LMG2L["PlayerButton_36"],
 }
 
--- Database Variables
-local RawScriptDatabase = {}
-local InstantiatedCards = {}
-local CurrentCategory = "Semua"
-local PLACEHOLDER_TEXT = "Search Script.."
+-- Target Database URL
+local DATABASE_URL = "https://raw.githubusercontent.com/narakuhub/vetrou/refs/heads/main/script.json"
 
--- Default Styles
-local COLOR_TAB_ACTIVE_BG = Color3.fromRGB(255, 255, 255)
-local COLOR_TAB_ACTIVE_TEXT = Color3.fromRGB(0, 0, 0)
-local COLOR_TAB_DEFAULT_BG = Color3.fromRGB(33, 33, 33)
-local COLOR_TAB_DEFAULT_TEXT = Color3.fromRGB(255, 255, 255)
+-- System State
+local ScriptDatabase = {}
+local ActiveCategory = "ALL"
+local ActiveCards = {}
+local OriginalCardSizes = {}
 
-local COLOR_SEARCH_PLACEHOLDER = Color3.fromRGB(120, 120, 120)
-local COLOR_SEARCH_TYPING = Color3.fromRGB(255, 255, 255)
+-- Hide and Disable Original Hardcode Template
+TemplateCard.Visible = false
 
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
--- SCRIPT DATABASE & LOADER
+-- CARD & EXPAND/COLLAPSE SYSTEM
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-local function LoadScriptDatabase(jsonData)
-	RawScriptDatabase = {}
-	
-	local success, decoded = pcall(function()
-		return HttpService:JSONDecode(jsonData)
-	end)
-
-	if success and decoded and decoded.Category then
-		for catName, scriptList in pairs(decoded.Category) do
-			for _, scriptData in ipairs(scriptList) do
-				table.insert(RawScriptDatabase, {
-					name = scriptData.name or "UNKNOWN",
-					path = scriptData.path or "/UI/Source.lua",
-					description = scriptData.description or "No description available.",
-					url = scriptData.url or "",
-					category = scriptData.category or catName
-				})
+-- Elements that strictly toggle visibility on Expand/Collapse
+local function SetCardContentVisible(card, isVisible)
+	local targetNames = {
+		"Path", "JudulDesc", "Description", "Garis", "Output", "ExecuteButton"
+	}
+	for _, child in ipairs(card:GetChildren()) do
+		for _, name in ipairs(targetNames) do
+			if child.Name == name then
+				child.Visible = isVisible
 			end
 		end
 	end
 end
 
--- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
--- CARD SYSTEM
--- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-local function BindCardInteractions(cardInstance, data)
-	local DropdownBtn = cardInstance:FindFirstChild("DropdownButton")
-	local IconDropdown = DropdownBtn and DropdownBtn:FindFirstChild("IconDropdown")
+-- Setup Expand / Collapse Interactive Toggle
+local function SetupDropdownToggle(card)
+	local dropdownBtn = card:FindFirstChild("DropdownButton")
+	local iconDropdown = dropdownBtn and dropdownBtn:FindFirstChild("IconDropdown")
 	
-	local Path = cardInstance:FindFirstChild("Path")
-	local JudulDesc = cardInstance:FindFirstChild("JudulDesc")
-	local Description = cardInstance:FindFirstChild("Description")
-	local Garis = cardInstance:FindFirstChild("Garis")
-	local Output = cardInstance:FindFirstChild("Output")
-	local ExecBtn = cardInstance:FindFirstChild("ExecuteButton")
-	local IconExec = ExecBtn and ExecBtn:FindFirstChild("IconExecute")
-
+	if not dropdownBtn or not iconDropdown then return end
+	
 	local isExpanded = false
-	local originalExecImage = IconExec and IconExec.Image or "rbxassetid://6026663699"
-	local defaultOutputText = "[REQUEST] GET " .. (data.url or "")
-
-	-- Set Initial Binding Data
-	if cardInstance:FindFirstChild("Name") then cardInstance.Name.Text = data.name end
-	if Path then Path.Text = data.path end
-	if Description then Description.Text = data.description end
-	if Output then Output.Text = defaultOutputText end
-
-	-- Initial Expanded State Setup (Collapsed by default)
-	local function SetExpandVisibility(visibleState)
-		if Path then Path.Visible = visibleState end
-		if JudulDesc then JudulDesc.Visible = visibleState end
-		if Description then Description.Visible = visibleState end
-		if Garis then Garis.Visible = visibleState end
-		if Output then Output.Visible = visibleState end
-		if ExecBtn then ExecBtn.Visible = visibleState end
-	end
+	SetCardContentVisible(card, false)
+	card.Size = UDim2.new(0, 261, 0, 40)
 	
-	SetExpandVisibility(false)
-
-	-- 4. DROPDOWN TOGGLE
-	if DropdownBtn then
-		DropdownBtn.MouseButton1Click:Connect(function()
-			isExpanded = not isExpanded
-			
-			local targetSize = isExpanded and UDim2.new(0, 261, 0, 160) or UDim2.new(0, 261, 0, 40)
-			local targetRotation = isExpanded and 180 or 0
-			
-			TweenService:Create(cardInstance, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = targetSize}):Play()
-			if IconDropdown then
-				TweenService:Create(IconDropdown, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Rotation = targetRotation}):Play()
-			end
-
-			if isExpanded then
-				SetExpandVisibility(true)
-			else
-				task.delay(0.15, function()
-					if not isExpanded then
-						SetExpandVisibility(false)
-					end
-				end)
-			end
-		end)
-	end
-
-	-- 5. EXECUTE & 6. OUTPUT SYSTEM
-	if ExecBtn then
-		ExecBtn.MouseButton1Click:Connect(function()
-			-- Loading State
-			if IconExec then
-				IconExec.Image = "rbxassetid://10959947716"
-			end
-			
-			if Output then
-				Output.Text = "[ SERVER ] GET " .. (data.url or "")
-			end
-
-			local spinConnection
-			spinConnection = RunService.RenderStepped:Connect(function(dt)
-				if IconExec then
-					IconExec.Rotation = (IconExec.Rotation + (360 * dt)) % 360
-				end
-			end)
-
-			-- Run Async Script
-			task.spawn(function()
-				local execSuccess, execErr = pcall(function()
-					if data.url and data.url ~= "" then
-						loadstring(game:HttpGet(data.url))()
-					end
-				end)
-
-				if spinConnection then spinConnection:Disconnect() end
-
-				if IconExec then
-					IconExec.Image = originalExecImage
-					IconExec.Rotation = 0
-				end
-
-				if not execSuccess and Output then
-					Output.Text = "[ ERROR ] Execution Failed"
-					task.delay(2, function()
-						if Output then Output.Text = defaultOutputText end
-					end)
-				else
-					task.delay(1.5, function()
-						if Output then Output.Text = defaultOutputText end
-					end)
-				end
-			end)
-		end)
-	end
+	dropdownBtn.MouseButton1Click:Connect(function()
+		isExpanded = not isExpanded
+		
+		-- Animate Size & Arrow Rotation
+		local targetSize = isExpanded and UDim2.new(0, 261, 0, 160) or UDim2.new(0, 261, 0, 40)
+		local targetRotation = isExpanded and 180 or 0
+		
+		TweenService:Create(card, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = targetSize}):Play()
+		TweenService:Create(iconDropdown, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Rotation = targetRotation}):Play()
+		
+		-- Content Visibility Synchronization
+		if isExpanded then
+			SetCardContentVisible(card, true)
+		else
+			SetCardContentVisible(card, false)
+		end
+	end)
 end
 
-local function PopulateCards()
-	-- Clean existing cloned cards
-	for _, card in ipairs(InstantiatedCards) do
-		card:Destroy()
-	end
-	InstantiatedCards = {}
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- EXECUTE & ANIMATION SYSTEM
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-	local searchText = SearchBox.Text:lower()
-	if searchText == PLACEHOLDER_TEXT:lower() then
-		searchText = ""
-	end
-
-	for _, data in ipairs(RawScriptDatabase) do
-		-- Category Filter Check
-		local matchesCategory = (CurrentCategory == "Semua") or (data.category:lower() == CurrentCategory:lower())
+local function SetupExecuteSystem(card, data)
+	local execBtn = card:FindFirstChild("ExecuteButton")
+	local iconExec = execBtn and execBtn:FindFirstChild("IconExecute")
+	local outputLabel = card:FindFirstChild("Output")
+	
+	if not execBtn or not iconExec or not outputLabel then return end
+	
+	local defaultOutput = outputLabel.Text
+	local defaultImage = iconExec.Image
+	local isExecuting = false
+	
+	execBtn.MouseButton1Click:Connect(function()
+		if isExecuting then return end
+		isExecuting = true
 		
-		-- Search Text Filter Check
-		local matchesSearch = (searchText == "") or (data.name:lower():find(searchText, 1, true) ~= nil)
-
-		if matchesCategory and matchesSearch then
-			local ClonedCard = CardTemplate:Clone()
-			ClonedCard.Visible = true
-			ClonedCard.Parent = ScrollingFrame
+		-- Loading Visuals & Rotation
+		iconExec.Image = "rbxassetid://10959947716"
+		outputLabel.Text = "[ SERVER ] GET " .. tostring(data.url)
+		
+		local rotationConn
+		rotationConn = RunService.RenderStepped:Connect(function(dt)
+			iconExec.Rotation = (iconExec.Rotation + (360 * dt)) % 360
+		end)
+		
+		-- Run Remote Script Engine
+		task.spawn(function()
+			local success, err = pcall(function()
+				local rawCode = game:HttpGet(data.url)
+				local loadedFunc = loadstring(rawCode)
+				if loadedFunc then
+					loadedFunc()
+				end
+			end)
 			
-			BindCardInteractions(ClonedCard, data)
-			table.insert(InstantiatedCards, ClonedCard)
+			if not success then
+				warn("[NARAKU EXECUTE ERROR]:", err)
+			end
+			
+			-- Cleanup Animations
+			if rotationConn then rotationConn:Disconnect() end
+			iconExec.Rotation = 0
+			iconExec.Image = defaultImage
+			outputLabel.Text = defaultOutput
+			isExecuting = false
+		end)
+	end)
+end
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- CARD CLONING & BINDING
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+local function CreateCardFromData(data)
+	local newCard = TemplateCard:Clone()
+	newCard.Name = "Card_" .. tostring(data.name)
+	newCard.Parent = Container
+	newCard.Visible = true
+	
+	-- Data Binding
+	if newCard:FindFirstChild("Name") then newCard.Name.Text = tostring(data.name or "Script Card") end
+	if newCard:FindFirstChild("Path") then newCard.Path.Text = tostring(data.path or "/UI/Source.lua") end
+	if newCard:FindFirstChild("Description") then newCard.Description.Text = tostring(data.description or "No description provided.") end
+	
+	-- Store Metadata
+	newCard:SetAttribute("Category", string.upper(tostring(data.category or "ALL")))
+	newCard:SetAttribute("ScriptName", string.lower(tostring(data.name or "")))
+	
+	-- Setup Modules
+	SetupDropdownToggle(newCard)
+	SetupExecuteSystem(newCard, data)
+	
+	table.insert(ActiveCards, newCard)
+	return newCard
+end
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- FILTER & SEARCH ENGINE
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+local function FilterCards()
+	local query = string.lower(SearchBox.Text)
+	if query == "search script.." then query = "" end
+	
+	for _, card in ipairs(ActiveCards) do
+		local cardCategory = card:GetAttribute("Category") or ""
+		local cardName = card:GetAttribute("ScriptName") or ""
+		
+		local categoryMatches = (ActiveCategory == "ALL") or (cardCategory == ActiveCategory)
+		local nameMatches = (query == "") or string.find(cardName, query, 1, true)
+		
+		if categoryMatches and nameMatches then
+			card.Visible = true
+		else
+			card.Visible = false
 		end
 	end
 end
@@ -1156,58 +1132,102 @@ end
 -- TAB SYSTEM
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-local function SetActiveTab(selectedCategory)
-	CurrentCategory = selectedCategory
-
-	for _, tab in ipairs(TabButtons) do
-		if tab.Category:lower() == selectedCategory:lower() then
-			tab.Button.BackgroundColor3 = COLOR_TAB_ACTIVE_BG
-			tab.Button.TextColor3 = COLOR_TAB_ACTIVE_TEXT
-		else
-			tab.Button.BackgroundColor3 = COLOR_TAB_DEFAULT_BG
-			tab.Button.TextColor3 = COLOR_TAB_DEFAULT_TEXT
-		end
+local function SetActiveTab(targetCat, activeBtn)
+	ActiveCategory = targetCat
+	
+	-- Reset All Tab Styles
+	for cat, btn in pairs(TabButtons) do
+		btn.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
+		btn.TextColor3 = Color3.fromRGB(255, 255, 255)
 	end
-
-	PopulateCards()
+	
+	-- Highlight Selected Tab
+	activeBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	activeBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
+	
+	FilterCards()
 end
 
-local function InitTabSystem()
-	for _, tab in ipairs(TabButtons) do
-		tab.Button.MouseButton1Click:Connect(function()
-			SetActiveTab(tab.Category)
+local function BindTabSystem()
+	for cat, btn in pairs(TabButtons) do
+		btn.MouseButton1Click:Connect(function()
+			SetActiveTab(cat, btn)
 		end)
 	end
+	-- Default Tab Setup
+	SetActiveTab("ALL", TabButtons.ALL)
 end
 
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 -- SEARCH SYSTEM
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-local function InitSearchSystem()
-	SearchBox.Text = PLACEHOLDER_TEXT
-	SearchBox.TextColor3 = COLOR_SEARCH_PLACEHOLDER
-
+local function BindSearchSystem()
+	local PLACEHOLDER_TEXT = "Search Script.."
+	
 	SearchBox.Focused:Connect(function()
-		TweenService:Create(UIStroke_Search, TweenInfo.new(0.2), {Transparency = 0}):Play()
+		SearchStroke.Transparency = 0
 		if SearchBox.Text == PLACEHOLDER_TEXT then
 			SearchBox.Text = ""
-			SearchBox.TextColor3 = COLOR_SEARCH_TYPING
+			SearchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 		end
 	end)
-
+	
 	SearchBox.FocusLost:Connect(function()
-		TweenService:Create(UIStroke_Search, TweenInfo.new(0.2), {Transparency = 0.5}):Play()
-		if SearchBox.Text:match("^%s*$") then
+		SearchStroke.Transparency = 0.5
+		if SearchBox.Text == "" then
 			SearchBox.Text = PLACEHOLDER_TEXT
-			SearchBox.TextColor3 = COLOR_SEARCH_PLACEHOLDER
+			SearchBox.TextColor3 = Color3.fromRGB(212, 212, 212)
 		end
 	end)
-
+	
 	SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
-		if SearchBox:IsFocused() then
-			PopulateCards()
+		FilterCards()
+	end)
+end
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- DATABASE PARSER & POPULATE
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+local function ProcessScriptItems(itemsList, categoryName)
+	if type(itemsList) ~= "table" then return end
+	for _, item in ipairs(itemsList) do
+		item.category = categoryName
+		CreateCardFromData(item)
+	end
+end
+
+local function FetchDatabase()
+	task.spawn(function()
+		local success, response = pcall(function()
+			return game:HttpGet(DATABASE_URL)
+		end)
+		
+		if success and response then
+			local decodeSuccess, decodedData = pcall(function()
+				return HttpService:JSONDecode(response)
+			end)
+			
+			if decodeSuccess and decodedData then
+				-- Structure Parsing
+				if decodedData.Category then
+					for catName, items in pairs(decodedData.Category) do
+						ProcessScriptItems(items, catName)
+					end
+				elseif type(decodedData) == "table" and #decodedData > 0 then
+					for _, item in ipairs(decodedData) do
+						CreateCardFromData(item)
+					end
+				end
+			else
+				warn("[NARAKU JSON DECODE ERROR]: Failed to parse payload")
+			end
+		else
+			warn("[NARAKU HTTP ERROR]: Failed to fetch script.json database")
 		end
+		
+		FilterCards()
 	end)
 end
 
@@ -1215,15 +1235,12 @@ end
 -- INITIALIZATION
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-local function InitMainLogic(jsonString)
-	InitTabSystem()
-	InitSearchSystem()
-	
-	if jsonString then
-		LoadScriptDatabase(jsonString)
-	end
-	
-	SetActiveTab("Semua")
+local function InitSystem()
+	BindTabSystem()
+	BindSearchSystem()
+	FetchDatabase()
 end
+
+InitSystem()
 
 return LMG2L["ScreenGui_1"], require;
