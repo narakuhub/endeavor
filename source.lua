@@ -676,6 +676,227 @@ LMG2L["UIGradient_4f"] = Instance.new("UIGradient", LMG2L["OpenButton_4c"]);
 LMG2L["UIGradient_4f"]["Rotation"] = 45;
 LMG2L["UIGradient_4f"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(0, 0, 0)),ColorSequenceKeypoint.new(0.500, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(0, 0, 0))};
 
+-- ====================================================================
+-- NARAKU UI — SYSTEM MAIN PANEL (LOGIC ONLY)
+-- Compatible with LMG2L hardcoded table structure
+-- ====================================================================
 
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- CORE
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+-- Services
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local Lighting = game:GetService("Lighting")
+local UserInputService = game:GetService("UserInputService")
+local CoreGui = game:GetService("CoreGui")
+
+-- Direct Target References from LMG2L Table
+local ScreenGui = LMG2L["ScreenGui_1"]
+local NarakuUI = LMG2L["NarakuUI_2"]
+local Panel = LMG2L["Panel_3"]
+local Header = LMG2L["Header_3d"]
+local Background = LMG2L["Background_4a"]
+local Imagebackground = LMG2L["Imagebackground_8"]
+local SearchBox = LMG2L["SearchBox_4"]
+local ScrollingTab = LMG2L["ScrollingTab_26"]
+local ScrollingFrame = LMG2L["ScrollingFrame_c"]
+local BackButton = LMG2L["BackButton_47"]
+local CloseButton = LMG2L["CloseButton_3f"]
+local OpenButton = LMG2L["OpenButton_4c"]
+local UIStroke = LMG2L["UIStroke_23"]
+local UIGradient = LMG2L["UIGradient_24"]
+local UIStroke2 = LMG2L["UIStroke2_25"]
+
+-- Button UIStrokes for Flash Effects
+local BackButtonStroke = LMG2L["UIStroke_49"]
+local CloseButtonStroke = LMG2L["UIStroke_41"]
+
+-- State & Constants
+local ORIGINAL_SIZE = UDim2.new(0, 270, 0, 300)
+local BACK_STROKE_ORIG_COLOR = BackButtonStroke and BackButtonStroke.Color or Color3.fromRGB(86, 86, 86)
+local CLOSE_STROKE_ORIG_COLOR = CloseButtonStroke and CloseButtonStroke.Color or Color3.fromRGB(86, 86, 86)
+
+-- 1. Reparent to CoreGui
+ScreenGui.Parent = CoreGui
+
+-- 2. Single BlurEffect Setup
+local BlurEffect = Lighting:FindFirstChild("NarakuUI_Blur")
+if not BlurEffect then
+	BlurEffect = Instance.new("BlurEffect")
+	BlurEffect.Name = "NarakuUI_Blur"
+	BlurEffect.Size = 0
+	BlurEffect.Parent = Lighting
+end
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- VISUAL EFFECT
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+-- Blur System Toggle
+local function UpdateBlur(active)
+	local targetBlur = active and 18 or 0
+	TweenService:Create(BlurEffect, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = targetBlur}):Play()
+end
+
+-- Button UIStroke Flash Effects
+local function FlashStroke(strokeObject, flashColor, originalColor)
+	if not strokeObject then return end
+	local flashInfo = TweenInfo.new(0.12, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+	local restoreInfo = TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+	
+	local flashTween = TweenService:Create(strokeObject, flashInfo, {Color = flashColor})
+	local restoreTween = TweenService:Create(strokeObject, restoreInfo, {Color = originalColor})
+	
+	flashTween:Play()
+	flashTween.Completed:Connect(function()
+		restoreTween:Play()
+	end)
+end
+
+-- Continuous Border Rotation
+local function RotateStroke()
+	if UIGradient then
+		RunService.RenderStepped:Connect(function(deltaTime)
+			UIGradient.Rotation = (UIGradient.Rotation + (180 * deltaTime)) % 360
+		end)
+	end
+end
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- ANIMATION
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+-- Bounce Spawn Animation
+local function SpawnAnimation(onComplete)
+	Panel.Visible = true
+	Panel.Size = UDim2.new(0, 0, 0, 0)
+	
+	local tweenInfoGrow = TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+	local growTween = TweenService:Create(Panel, tweenInfoGrow, {Size = ORIGINAL_SIZE})
+	
+	UpdateBlur(true)
+	growTween:Play()
+	
+	if onComplete then
+		growTween.Completed:Connect(onComplete)
+	end
+end
+
+-- Scale Down Hide Animation
+local function HideAnimation(onComplete)
+	local tweenInfoShrink = TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+	local shrinkTween = TweenService:Create(Panel, tweenInfoShrink, {Size = UDim2.new(0, 0, 0, 0)})
+	
+	UpdateBlur(false)
+	shrinkTween:Play()
+	
+	shrinkTween.Completed:Connect(function()
+		Panel.Visible = false
+		Panel.Size = ORIGINAL_SIZE
+		if onComplete then
+			onComplete()
+		end
+	end)
+end
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- UTILITY
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+-- Universal Dragging System (Desktop & Touch Support)
+local function EnableDrag()
+	Panel.Active = true
+	pcall(function()
+		Panel.Draggable = true
+	end)
+	
+	local dragging = false
+	local dragInput, dragStart, startPos
+
+	Header.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			dragging = true
+			dragStart = input.Position
+			startPos = Panel.Position
+
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging = false
+				end
+			end)
+		end
+	end)
+
+	Header.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+			dragInput = input
+		end
+	end)
+
+	UserInputService.InputChanged:Connect(function(input)
+		if input == dragInput and dragging then
+			local delta = input.Position - dragStart
+			TweenService:Create(Panel, TweenInfo.new(0.05, Enum.EasingStyle.Linear), {
+				Position = UDim2.new(
+					startPos.X.Scale,
+					startPos.X.Offset + delta.X,
+					startPos.Y.Scale,
+					startPos.Y.Offset + delta.Y
+				)
+			}):Play()
+		end
+	end)
+end
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- BUTTON SYSTEM
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+local function BindButtons()
+	-- Open Button Handler
+	OpenButton.MouseButton1Click:Connect(function()
+		OpenButton.Visible = false
+		SpawnAnimation()
+	end)
+
+	-- Back (Minimize/Hide) Button Handler
+	BackButton.MouseButton1Click:Connect(function()
+		FlashStroke(BackButtonStroke, Color3.fromRGB(255, 255, 255), BACK_STROKE_ORIG_COLOR)
+		HideAnimation(function()
+			OpenButton.Visible = true
+		end)
+	end)
+
+	-- Close Button Handler
+	CloseButton.MouseButton1Click:Connect(function()
+		FlashStroke(CloseButtonStroke, Color3.fromRGB(255, 0, 0), CLOSE_STROKE_ORIG_COLOR)
+		
+		task.delay(0.1, function()
+			UpdateBlur(false)
+			if BlurEffect and BlurEffect.Name == "NarakuUI_Blur" then
+				BlurEffect:Destroy()
+			end
+			ScreenGui:Destroy()
+		end)
+	end)
+end
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- INITIALIZATION
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+local function Init()
+	RotateStroke()
+	EnableDrag()
+	BindButtons()
+	
+	-- Initial Spawn Execution
+	OpenButton.Visible = false
+	SpawnAnimation()
+end
+
+Init()
 
 return LMG2L["ScreenGui_1"], require;
