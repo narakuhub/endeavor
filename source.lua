@@ -1187,16 +1187,42 @@ local function BindSearchSystem()
 end
 
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
--- DATABASE PARSER & POPULATE
+-- CARD CLONING & BINDING (FIXED OBJECT NAMES)
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-local function ProcessScriptItems(itemsList, categoryName)
-	if type(itemsList) ~= "table" then return end
-	for _, item in ipairs(itemsList) do
-		item.category = categoryName
-		CreateCardFromData(item)
-	end
+local function CreateCardFromData(data)
+	local newCard = TemplateCard:Clone()
+	newCard.Name = "Card_" .. tostring(data.name or "Script")
+	newCard.Parent = Container
+	newCard.Visible = true
+	
+	-- Gunakan nama Instance spesifik beserta suffix nomornya!
+	local labelName = newCard:FindFirstChild("Name_20")
+	local labelPath = newCard:FindFirstChild("Path_10")
+	local labelDesc = newCard:FindFirstChild("Description_11")
+	
+	if labelName then labelName.Text = tostring(data.name or "Script Card") end
+	if labelPath then labelPath.Text = tostring(data.path or "/UI/Source.lua") end
+	if labelDesc then labelDesc.Text = tostring(data.description or "No description provided.") end
+	
+	-- Store Metadata
+	newCard:SetAttribute("Category", string.upper(tostring(data.category or "ALL")))
+	newCard:SetAttribute("ScriptName", string.lower(tostring(data.name or "")))
+	
+	-- Setup Modules
+	SetupDropdownToggle(newCard)
+	SetupExecuteSystem(newCard, data)
+	
+	table.insert(ActiveCards, newCard)
+	return newCard
 end
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- DATABASE PARSER & POPULATE (FIXED HTTP URL)
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+-- Ganti URL ini dengan URL GitHub Raw yang VALID (Tanpa refs/heads):
+local DATABASE_URL = "https://raw.githubusercontent.com/narakuhub/vetrou/main/script.json"
 
 local function FetchDatabase()
 	task.spawn(function()
@@ -1210,7 +1236,6 @@ local function FetchDatabase()
 			end)
 			
 			if decodeSuccess and decodedData then
-				-- Structure Parsing
 				if decodedData.Category then
 					for catName, items in pairs(decodedData.Category) do
 						ProcessScriptItems(items, catName)
@@ -1221,10 +1246,10 @@ local function FetchDatabase()
 					end
 				end
 			else
-				warn("[NARAKU JSON DECODE ERROR]: Failed to parse payload")
+				warn("[NARAKU ERROR]: Gagal decode JSON! Cek format script.json kamu.")
 			end
 		else
-			warn("[NARAKU HTTP ERROR]: Failed to fetch script.json database")
+			warn("[NARAKU ERROR 404]: File script.json tidak ditemukan di GitHub URL!")
 		end
 		
 		FilterCards()
