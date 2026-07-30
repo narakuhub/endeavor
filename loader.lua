@@ -7,7 +7,7 @@
 local HttpService = game:GetService("HttpService")
 
 -- UBAH URL DI BAWAH INI SESUAI DENGAN LINK REPOSITORI GITHUB ANDA (RAW LINK)
-local GITHUB_RAW_URL = "https://raw.githubusercontent.com/UsernameAnda/NarakuSource/main/"
+local GITHUB_RAW_URL = "https://raw.githubusercontent.com/narakuhub/vetrou/refs/heads/main/UI/UI.lua"
 
 local function loadScript(path)
     local success, result = pcall(function()
