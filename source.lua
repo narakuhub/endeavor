@@ -1052,13 +1052,14 @@ local function SetupDropdownToggle(card)
 end
 
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
--- EXECUTE SYSTEM (ExecuteButton_12, IconExecute_14, Output_1d)
+-- EXECUTE SYSTEM (DYNAMIC LOAD STATUS OUTPUT - NO RAW LINK)
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 local function SetupExecuteSystem(card, scriptUrl)
 	local execBtn = card:FindFirstChild("ExecuteButton_12", true) or card:FindFirstChild("ExecuteButton", true)
 	local iconExec = execBtn and (execBtn:FindFirstChild("IconExecute_14", true) or execBtn:FindFirstChild("IconExecute", true))
 	local outputLabel = card:FindFirstChild("Output_1d", true) or card:FindFirstChild("Output", true)
+	local labelName = card:FindFirstChild("Name_20", true) or card:FindFirstChild("Name", true)
 	
 	if not execBtn then return end
 	
@@ -1068,15 +1069,26 @@ local function SetupExecuteSystem(card, scriptUrl)
 	
 	execBtn.MouseButton1Click:Connect(function()
 		if isExecuting then return end
-		if not scriptUrl or scriptUrl == "" then
-			if outputLabel then outputLabel.Text = "[ ERROR ] URL SCRIPT KOSONG!" end
+		
+		-- Ambil nama script dari UI Card
+		local scriptTitle = labelName and labelName.Text or "SCRIPT"
+		
+		-- Validasi URL Kosong
+		if not scriptUrl or scriptUrl == "" or scriptUrl == "nil" then
+			if outputLabel then outputLabel.Text = "[ ERROR ] 404 URL NOT FOUND!" end
+			task.delay(2, function()
+				if outputLabel then outputLabel.Text = defaultOutput end
+			end)
 			return
 		end
 		
 		isExecuting = true
 		if iconExec then iconExec.Image = "rbxassetid://10959947716" end
-		if outputLabel then outputLabel.Text = "[ SERVER ] GET " .. tostring(scriptUrl) end
 		
+		-- Step 1: Status Fetch/HTTP Get
+		if outputLabel then outputLabel.Text = "[ SERVER ] GETTING DATA..." end
+		
+		-- Animasi Putar Icon
 		local rotationConn
 		if iconExec then
 			rotationConn = RunService.RenderStepped:Connect(function(dt)
@@ -1085,22 +1097,42 @@ local function SetupExecuteSystem(card, scriptUrl)
 		end
 		
 		task.spawn(function()
-			local success, err = pcall(function()
-				local rawCode = game:HttpGet(scriptUrl)
-				local loadedFunc = loadstring(rawCode)
-				if loadedFunc then
-					loadedFunc()
-				else
-					error("Syntax Error!")
-				end
+			local httpSuccess, rawCode = pcall(function()
+				return game:HttpGet(scriptUrl)
 			end)
 			
-			if not success then
-				warn("[NARAKU EXECUTE ERROR]:", err)
-				if outputLabel then outputLabel.Text = "[ ERROR ] EXECUTION FAILED" end
+			-- Cek jika gagal fetch/get dari server
+			if not httpSuccess or not rawCode or rawCode == "" then
+				warn("[NARAKU ERROR]: Failed to fetch URL -> " .. tostring(scriptUrl))
+				if outputLabel then outputLabel.Text = "[ ERROR ] 404 HTTP FETCH FAILED!" end
 				task.wait(2)
+			else
+				-- Step 2: Status Running Script Name
+				if outputLabel then outputLabel.Text = "[ SERVER ] RUN " .. string.upper(scriptTitle) .. "..." end
+				task.wait(0.3) -- Delay visual sejenak untuk transisi
+				
+				local execSuccess, err = pcall(function()
+					local loadedFunc = loadstring(rawCode)
+					if loadedFunc then
+						loadedFunc()
+					else
+						error("Syntax Error / Invalid Luau Code")
+					end
+				end)
+				
+				if execSuccess then
+					-- Step 3: Status Sukses
+					if outputLabel then outputLabel.Text = "[ SUKSES ] EXECUTED!" end
+					task.wait(1.5)
+				else
+					-- Step 4: Status Error Syntax / Script Run Error
+					warn("[NARAKU EXECUTE ERROR]:", err)
+					if outputLabel then outputLabel.Text = "[ ERROR ] EXECUTION FAILED!" end
+					task.wait(2)
+				end
 			end
 			
+			-- Reset Tampilan & Animation State
 			if rotationConn then rotationConn:Disconnect() end
 			if iconExec then
 				iconExec.Rotation = 0
