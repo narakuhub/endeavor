@@ -1,42 +1,75 @@
 --[=[
     Project: NARAKU SOURCE
     File: Loader.lua
-    Description: Entry Point. Menghubungkan seluruh system, load UI, load Source, load Module, load API.
+    Description: Main entry point loader for NarakuUI hub.
 ]=]
 
-local Loader = {}
+local HttpService = game:GetService("HttpService")
 
-function Loader.init()
-    print("[NARAKU SOURCE] Starting Loader...")
+-- UBAH URL DI BAWAH INI SESUAI DENGAN LINK REPOSITORI GITHUB ANDA (RAW LINK)
+local GITHUB_RAW_URL = "https://raw.githubusercontent.com/UsernameAnda/NarakuSource/main/"
 
-    -- Load UI Module (Reference Mapping)
-    local successUI, UI = pcall(function()
-        return require(script.UI.UI)
+local function loadScript(path)
+    local success, result = pcall(function()
+        return game:HttpGet(GITHUB_RAW_URL .. path)
     end)
-
-    if not successUI or not UI then
-        warn("[NARAKU SOURCE] Failed to load UI/UI.lua: ", UI)
-        return
+    
+    if not success or not result then
+        warn("[NARAKU LOADER]: Gagal mengunduh file -> " .. path)
+        return nil
     end
-
-    print("[NARAKU SOURCE] UI Module loaded successfully.")
-
-    -- Load MainPanel Controller
-    local successPanel, MainPanel = pcall(function()
-        return require(script.UI.MainPanel)
-    end)
-
-    if successPanel and MainPanel and MainPanel.init then
-        MainPanel.init()
-        print("[NARAKU SOURCE] MainPanel Controller initialized successfully.")
-    else
-        warn("[NARAKU SOURCE] Failed to initialize MainPanel: ", MainPanel)
+    
+    local func, err = loadstring(result)
+    if not func then
+        warn("[NARAKU LOADER]: Gagal melakukan kompilasi file " .. path .. " | Error: " .. tostring(err))
+        return nil
     end
-
-    print("[NARAKU SOURCE] All systems loaded successfully. Plug-and-Play ready.")
+    
+    return func()
 end
 
--- Auto-execute entry point when loaded
-Loader.init()
+print("[NARAKU LOADER]: Memulai pemuatan skrip...")
 
-return Loader
+-- 1. Jalankan Bypass terlebih dahulu (jika ada proteksi game)
+local bypassModule = loadScript("Bypass.lua")
+if bypassModule then
+    print("[NARAKU LOADER]: Bypass berhasil dimuat.")
+end
+
+-- 2. Muat konfigurasi/data dari Source.json
+local sourceData = nil
+local successJson, jsonResult = pcall(function()
+    return game:HttpGet(GITHUB_RAW_URL .. "Source.json")
+end)
+if successJson and jsonResult then
+    local decodeSuccess, decoded = pcall(function()
+        return HttpService:JSONDecode(jsonResult)
+    end)
+    if decodeSuccess then
+        sourceData = decoded
+        print("[NARAKU LOADER]: Source.json berhasil dimuat.")
+    end
+end
+
+-- 3. Muat komponen antarmuka (UI)
+-- Muat UI.lua terlebih dahulu (Wajib menggunakan raw link sesuai permintaan)
+local UI = loadScript("UI/UI.lua")
+if not UI then
+    warn("[NARAKU LOADER]: Gagal memuat UI.lua, proses dihentikan.")
+    return
+end
+
+-- Muat MainPanel.lua
+local MainPanel = loadScript("UI/MainPanel.lua")
+if MainPanel and type(MainPanel.init) == "function" then
+    MainPanel.init()
+    print("[NARAKU LOADER]: MainPanel berhasil diinisialisasi.")
+end
+
+-- Muat SystemCard.lua (untuk kartu/fitur tambahan di dalam UI)
+local SystemCard = loadScript("UI/SystemCard.lua")
+if SystemCard then
+    print("[NARAKU LOADER]: SystemCard berhasil dimuat.")
+end
+
+print("[NARAKU LOADER]: Semua komponen NARAKU SOURCE berhasil dimuat sepenuhnya!")
