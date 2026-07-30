@@ -979,35 +979,44 @@ if TemplateCard then
 end
 
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
--- HELPER & VISIBILITY CONTROL
+-- HELPER & VISIBILITY CONTROL (100% RECURSIVE FIX)
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
--- Kontrol Elemen Dalam Card Saat Expand/Collapse (Persis Nama Hierarchy Studio)
+-- Kontrol Elemen Dalam Card Saat Expand/Collapse (Mencari hingga ke Sub-Frame)
 local function SetCardContentVisible(card, isVisible)
 	if not card then return end
+	
+	-- Daftar nama instance spesifik beserta alternatifnya
 	local targetNames = {
-		"Path_10", "JudulDesc_21", "Description_11", "Garis_22", "Output_1d", "ExecuteButton_12"
+		"Path_10", "Path",
+		"JudulDesc_21", "JudulDesc",
+		"Description_11", "Description",
+		"Garis_22", "Garis",
+		"Output_1d", "Output",
+		"ExecuteButton_12", "ExecuteButton"
 	}
-	for _, child in ipairs(card:GetChildren()) do
-		for _, name in ipairs(targetNames) do
-			if child.Name == name then
-				child.Visible = isVisible
-			end
+	
+	for _, name in ipairs(targetNames) do
+		-- Menggunakan parameter 'true' agar pencarian bersifat rekursif ke dalam child/frame
+		local targetInstance = card:FindFirstChild(name, true)
+		if targetInstance and targetInstance:IsA("GuiObject") then
+			targetInstance.Visible = isVisible
 		end
 	end
 end
 
+-- Engine untuk menyaring card berdasarkan Search Bar & Kategori Tab
 local function FilterCards()
 	local query = string.lower(SearchBox and SearchBox.Text or "")
 	if query == "search script.." then query = "" end
 	
 	for _, card in ipairs(ActiveCards) do
 		if card and card.Parent then
-			local cardCategory = card:GetAttribute("Category") or ""
-			local cardName = card:GetAttribute("ScriptName") or ""
+			local cardCategory = tostring(card:GetAttribute("Category") or ""):upper()
+			local cardName = tostring(card:GetAttribute("ScriptName") or ""):lower()
 			
 			local categoryMatches = (ActiveCategory == "ALL") or (cardCategory == ActiveCategory)
-			local nameMatches = (query == "") or string.find(cardName, query, 1, true)
+			local nameMatches = (query == "") or (string.find(cardName, query, 1, true) ~= nil)
 			
 			card.Visible = (categoryMatches and nameMatches)
 		end
