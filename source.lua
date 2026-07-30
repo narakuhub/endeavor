@@ -988,7 +988,6 @@ local function SetCardContentVisible(card, isVisible)
 	
 	-- Daftar nama instance spesifik beserta alternatifnya
 	local targetNames = {
-		"Path_10", "Path",
 		"JudulDesc_21", "JudulDesc",
 		"Description_11", "Description",
 		"Garis_22", "Garis",
