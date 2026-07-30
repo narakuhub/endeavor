@@ -23,8 +23,9 @@ LMG2L["NarakuUI_2"]["Name"] = [[NarakuUI]];
 LMG2L["Panel_3"] = Instance.new("Frame", LMG2L["NarakuUI_2"]);
 LMG2L["Panel_3"]["BorderSizePixel"] = 0;
 LMG2L["Panel_3"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0);
+LMG2L["Panel_3"]["AnchorPoint"] = Vector2.new(0.5, 0.5);
 LMG2L["Panel_3"]["Size"] = UDim2.new(0, 270, 0, 300);
-LMG2L["Panel_3"]["Position"] = UDim2.new(0, 40, 0, 25);
+LMG2L["Panel_3"]["Position"] = UDim2.new(0.5, 0, 0.5, 0);
 LMG2L["Panel_3"]["Name"] = [[Panel]];
 
 
@@ -48,24 +49,24 @@ LMG2L["UICorner_5"] = Instance.new("UICorner", LMG2L["SearchBox_4"]);
 LMG2L["UICorner_5"]["CornerRadius"] = UDim.new(0, 5);
 
 
--- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.SearchBox.UIStroke
-LMG2L["UIStroke_6"] = Instance.new("UIStroke", LMG2L["SearchBox_4"]);
-LMG2L["UIStroke_6"]["Transparency"] = 0.5;
-LMG2L["UIStroke_6"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
-LMG2L["UIStroke_6"]["Thickness"] = 0.5;
-LMG2L["UIStroke_6"]["Color"] = Color3.fromRGB(86, 86, 86);
-
-
 -- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.SearchBox.IconSearch
-LMG2L["IconSearch_7"] = Instance.new("ImageLabel", LMG2L["SearchBox_4"]);
-LMG2L["IconSearch_7"]["BorderSizePixel"] = 0;
-LMG2L["IconSearch_7"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0);
--- LMG2L["IconSearch_7"]["ImageContent"] = ;
-LMG2L["IconSearch_7"]["Image"] = [[rbxassetid://109869955247116]];
-LMG2L["IconSearch_7"]["Size"] = UDim2.new(0, 16, 0, 16);
-LMG2L["IconSearch_7"]["BackgroundTransparency"] = 1;
-LMG2L["IconSearch_7"]["Name"] = [[IconSearch]];
-LMG2L["IconSearch_7"]["Position"] = UDim2.new(0, 4, 0, 4);
+LMG2L["IconSearch_6"] = Instance.new("ImageLabel", LMG2L["SearchBox_4"]);
+LMG2L["IconSearch_6"]["BorderSizePixel"] = 0;
+LMG2L["IconSearch_6"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0);
+-- LMG2L["IconSearch_6"]["ImageContent"] = ;
+LMG2L["IconSearch_6"]["Image"] = [[rbxassetid://109869955247116]];
+LMG2L["IconSearch_6"]["Size"] = UDim2.new(0, 16, 0, 16);
+LMG2L["IconSearch_6"]["BackgroundTransparency"] = 1;
+LMG2L["IconSearch_6"]["Name"] = [[IconSearch]];
+LMG2L["IconSearch_6"]["Position"] = UDim2.new(0, 4, 0, 4);
+
+
+-- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.SearchBox.UIStroke
+LMG2L["UIStroke_7"] = Instance.new("UIStroke", LMG2L["SearchBox_4"]);
+LMG2L["UIStroke_7"]["Transparency"] = 0.5;
+LMG2L["UIStroke_7"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
+LMG2L["UIStroke_7"]["Thickness"] = 0.5;
+LMG2L["UIStroke_7"]["Color"] = Color3.fromRGB(86, 86, 86);
 
 
 -- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.Imagebackground
@@ -128,162 +129,162 @@ LMG2L["Card_f"]["Name"] = [[Card]];
 LMG2L["Card_f"]["BackgroundTransparency"] = 0.5;
 
 
+-- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card.Path
+LMG2L["Path_10"] = Instance.new("TextLabel", LMG2L["Card_f"]);
+LMG2L["Path_10"]["BorderSizePixel"] = 0;
+LMG2L["Path_10"]["TextSize"] = 10;
+LMG2L["Path_10"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+LMG2L["Path_10"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0);
+LMG2L["Path_10"]["FontFace"] = Font.new([[rbxasset://fonts/families/Inconsolata.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+LMG2L["Path_10"]["TextColor3"] = Color3.fromRGB(159, 159, 159);
+LMG2L["Path_10"]["BackgroundTransparency"] = 1;
+LMG2L["Path_10"]["Size"] = UDim2.new(0, 194, 0, 14);
+LMG2L["Path_10"]["Text"] = [[/UI/Source.lua]];
+LMG2L["Path_10"]["Name"] = [[Path]];
+LMG2L["Path_10"]["Position"] = UDim2.new(0, 4, 0, 22);
+
+
 -- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card.Description
-LMG2L["Description_10"] = Instance.new("TextLabel", LMG2L["Card_f"]);
-LMG2L["Description_10"]["TextWrapped"] = true;
-LMG2L["Description_10"]["BorderSizePixel"] = 0;
-LMG2L["Description_10"]["TextSize"] = 9;
-LMG2L["Description_10"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-LMG2L["Description_10"]["TextYAlignment"] = Enum.TextYAlignment.Top;
-LMG2L["Description_10"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0);
-LMG2L["Description_10"]["FontFace"] = Font.new([[rbxasset://fonts/families/Arial.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
-LMG2L["Description_10"]["TextColor3"] = Color3.fromRGB(208, 208, 208);
-LMG2L["Description_10"]["BackgroundTransparency"] = 1;
-LMG2L["Description_10"]["Size"] = UDim2.new(0, 252, 0, 35);
-LMG2L["Description_10"]["Text"] = [[Demonstration card used for previewing plugin entries, source scripts, and future feature integration.]];
-LMG2L["Description_10"]["Name"] = [[Description]];
-LMG2L["Description_10"]["Position"] = UDim2.new(0, 6, 0, 56);
-
-
--- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card.Output
-LMG2L["Output_11"] = Instance.new("TextLabel", LMG2L["Card_f"]);
-LMG2L["Output_11"]["BorderSizePixel"] = 0;
-LMG2L["Output_11"]["TextSize"] = 9;
-LMG2L["Output_11"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-LMG2L["Output_11"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-LMG2L["Output_11"]["FontFace"] = Font.new([[rbxasset://fonts/families/Inconsolata.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
-LMG2L["Output_11"]["TextColor3"] = Color3.fromRGB(218, 218, 218);
-LMG2L["Output_11"]["BackgroundTransparency"] = 1;
-LMG2L["Output_11"]["Size"] = UDim2.new(0, 250, 0, 24);
-LMG2L["Output_11"]["Text"] = [[ [REQUEST] GET https://...]];
-LMG2L["Output_11"]["Name"] = [[Output]];
-LMG2L["Output_11"]["Position"] = UDim2.new(0, 6, 0, 98);
-
-
--- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card.Output.UICorner
-LMG2L["UICorner_12"] = Instance.new("UICorner", LMG2L["Output_11"]);
-LMG2L["UICorner_12"]["CornerRadius"] = UDim.new(0, 5);
-
-
--- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card.Output.UIStroke
-LMG2L["UIStroke_13"] = Instance.new("UIStroke", LMG2L["Output_11"]);
-LMG2L["UIStroke_13"]["Transparency"] = 0.5;
-LMG2L["UIStroke_13"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
-LMG2L["UIStroke_13"]["Thickness"] = 0.5;
-LMG2L["UIStroke_13"]["Color"] = Color3.fromRGB(86, 86, 86);
+LMG2L["Description_11"] = Instance.new("TextLabel", LMG2L["Card_f"]);
+LMG2L["Description_11"]["TextWrapped"] = true;
+LMG2L["Description_11"]["BorderSizePixel"] = 0;
+LMG2L["Description_11"]["TextSize"] = 9;
+LMG2L["Description_11"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+LMG2L["Description_11"]["TextYAlignment"] = Enum.TextYAlignment.Top;
+LMG2L["Description_11"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0);
+LMG2L["Description_11"]["FontFace"] = Font.new([[rbxasset://fonts/families/Arial.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+LMG2L["Description_11"]["TextColor3"] = Color3.fromRGB(208, 208, 208);
+LMG2L["Description_11"]["BackgroundTransparency"] = 1;
+LMG2L["Description_11"]["Size"] = UDim2.new(0, 252, 0, 35);
+LMG2L["Description_11"]["Text"] = [[Demonstration card used for previewing plugin entries, source scripts, and future feature integration.]];
+LMG2L["Description_11"]["Name"] = [[Description]];
+LMG2L["Description_11"]["Position"] = UDim2.new(0, 6, 0, 56);
 
 
 -- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card.ExecuteButton
-LMG2L["ExecuteButton_14"] = Instance.new("TextButton", LMG2L["Card_f"]);
-LMG2L["ExecuteButton_14"]["BorderSizePixel"] = 0;
-LMG2L["ExecuteButton_14"]["TextSize"] = 12;
-LMG2L["ExecuteButton_14"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-LMG2L["ExecuteButton_14"]["FontFace"] = Font.new([[rbxasset://fonts/families/Arial.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
-LMG2L["ExecuteButton_14"]["Size"] = UDim2.new(0, 250, 0, 26);
-LMG2L["ExecuteButton_14"]["Text"] = [[EXECUTE]];
-LMG2L["ExecuteButton_14"]["Name"] = [[ExecuteButton]];
-LMG2L["ExecuteButton_14"]["Position"] = UDim2.new(0, 6, 0, 128);
+LMG2L["ExecuteButton_12"] = Instance.new("TextButton", LMG2L["Card_f"]);
+LMG2L["ExecuteButton_12"]["BorderSizePixel"] = 0;
+LMG2L["ExecuteButton_12"]["TextSize"] = 12;
+LMG2L["ExecuteButton_12"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+LMG2L["ExecuteButton_12"]["FontFace"] = Font.new([[rbxasset://fonts/families/Arial.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+LMG2L["ExecuteButton_12"]["Size"] = UDim2.new(0, 250, 0, 26);
+LMG2L["ExecuteButton_12"]["Text"] = [[EXECUTE]];
+LMG2L["ExecuteButton_12"]["Name"] = [[ExecuteButton]];
+LMG2L["ExecuteButton_12"]["Position"] = UDim2.new(0, 6, 0, 128);
 
 
 -- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card.ExecuteButton.UICorner
-LMG2L["UICorner_15"] = Instance.new("UICorner", LMG2L["ExecuteButton_14"]);
-LMG2L["UICorner_15"]["CornerRadius"] = UDim.new(0, 5);
+LMG2L["UICorner_13"] = Instance.new("UICorner", LMG2L["ExecuteButton_12"]);
+LMG2L["UICorner_13"]["CornerRadius"] = UDim.new(0, 5);
 
 
 -- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card.ExecuteButton.IconExecute
-LMG2L["IconExecute_16"] = Instance.new("ImageLabel", LMG2L["ExecuteButton_14"]);
-LMG2L["IconExecute_16"]["BorderSizePixel"] = 0;
-LMG2L["IconExecute_16"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0);
--- LMG2L["IconExecute_16"]["ImageContent"] = ;
-LMG2L["IconExecute_16"]["ImageColor3"] = Color3.fromRGB(0, 0, 0);
-LMG2L["IconExecute_16"]["Image"] = [[rbxassetid://6026663699]];
-LMG2L["IconExecute_16"]["Size"] = UDim2.new(0, 18, 0, 18);
-LMG2L["IconExecute_16"]["BackgroundTransparency"] = 1;
-LMG2L["IconExecute_16"]["Name"] = [[IconExecute]];
-LMG2L["IconExecute_16"]["Position"] = UDim2.new(0, 78, 0, 4);
+LMG2L["IconExecute_14"] = Instance.new("ImageLabel", LMG2L["ExecuteButton_12"]);
+LMG2L["IconExecute_14"]["BorderSizePixel"] = 0;
+LMG2L["IconExecute_14"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0);
+-- LMG2L["IconExecute_14"]["ImageContent"] = ;
+LMG2L["IconExecute_14"]["ImageColor3"] = Color3.fromRGB(0, 0, 0);
+LMG2L["IconExecute_14"]["Image"] = [[rbxassetid://6026663699]];
+LMG2L["IconExecute_14"]["Size"] = UDim2.new(0, 18, 0, 18);
+LMG2L["IconExecute_14"]["BackgroundTransparency"] = 1;
+LMG2L["IconExecute_14"]["Name"] = [[IconExecute]];
+LMG2L["IconExecute_14"]["Position"] = UDim2.new(0, 78, 0, 4);
 
 
 -- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card.UIStroke
-LMG2L["UIStroke_17"] = Instance.new("UIStroke", LMG2L["Card_f"]);
-LMG2L["UIStroke_17"]["Transparency"] = 0.5;
-LMG2L["UIStroke_17"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
-LMG2L["UIStroke_17"]["Thickness"] = 0.5;
-LMG2L["UIStroke_17"]["Color"] = Color3.fromRGB(86, 86, 86);
-
-
--- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card.Tag
-LMG2L["Tag_18"] = Instance.new("TextLabel", LMG2L["Card_f"]);
-LMG2L["Tag_18"]["BorderSizePixel"] = 0;
-LMG2L["Tag_18"]["TextSize"] = 9;
-LMG2L["Tag_18"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0);
-LMG2L["Tag_18"]["FontFace"] = Font.new([[rbxasset://fonts/families/Arial.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
-LMG2L["Tag_18"]["TextColor3"] = Color3.fromRGB(246, 246, 246);
-LMG2L["Tag_18"]["Size"] = UDim2.new(0, 32, 0, 16);
-LMG2L["Tag_18"]["Text"] = [[GET]];
-LMG2L["Tag_18"]["Name"] = [[Tag]];
-LMG2L["Tag_18"]["Position"] = UDim2.new(0, 4, 0, 4);
-
-
--- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card.Tag.UICorner
-LMG2L["UICorner_19"] = Instance.new("UICorner", LMG2L["Tag_18"]);
-LMG2L["UICorner_19"]["CornerRadius"] = UDim.new(0, 5);
-
-
--- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card.Tag.UIStroke
-LMG2L["UIStroke_1a"] = Instance.new("UIStroke", LMG2L["Tag_18"]);
-LMG2L["UIStroke_1a"]["Transparency"] = 0.5;
-LMG2L["UIStroke_1a"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
-LMG2L["UIStroke_1a"]["Thickness"] = 0.5;
-LMG2L["UIStroke_1a"]["Color"] = Color3.fromRGB(86, 86, 86);
-
-
--- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card.JudulDesc
-LMG2L["JudulDesc_1b"] = Instance.new("TextLabel", LMG2L["Card_f"]);
-LMG2L["JudulDesc_1b"]["BorderSizePixel"] = 0;
-LMG2L["JudulDesc_1b"]["TextSize"] = 9;
-LMG2L["JudulDesc_1b"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-LMG2L["JudulDesc_1b"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0);
-LMG2L["JudulDesc_1b"]["FontFace"] = Font.new([[rbxasset://fonts/families/Arial.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
-LMG2L["JudulDesc_1b"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-LMG2L["JudulDesc_1b"]["BackgroundTransparency"] = 1;
-LMG2L["JudulDesc_1b"]["Size"] = UDim2.new(0, 146, 0, 14);
-LMG2L["JudulDesc_1b"]["Text"] = [[NOTE]];
-LMG2L["JudulDesc_1b"]["Name"] = [[JudulDesc]];
-LMG2L["JudulDesc_1b"]["Position"] = UDim2.new(0, 6, 0, 42);
+LMG2L["UIStroke_15"] = Instance.new("UIStroke", LMG2L["Card_f"]);
+LMG2L["UIStroke_15"]["Transparency"] = 0.5;
+LMG2L["UIStroke_15"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
+LMG2L["UIStroke_15"]["Thickness"] = 0.5;
+LMG2L["UIStroke_15"]["Color"] = Color3.fromRGB(86, 86, 86);
 
 
 -- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card.UICorner
-LMG2L["UICorner_1c"] = Instance.new("UICorner", LMG2L["Card_f"]);
+LMG2L["UICorner_16"] = Instance.new("UICorner", LMG2L["Card_f"]);
 
 
 
 -- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card.DropdownButton
-LMG2L["DropdownButton_1d"] = Instance.new("TextButton", LMG2L["Card_f"]);
-LMG2L["DropdownButton_1d"]["BorderSizePixel"] = 0;
-LMG2L["DropdownButton_1d"]["TextSize"] = 12;
-LMG2L["DropdownButton_1d"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
-LMG2L["DropdownButton_1d"]["FontFace"] = Font.new([[rbxasset://fonts/families/Arial.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
-LMG2L["DropdownButton_1d"]["BackgroundTransparency"] = 1;
-LMG2L["DropdownButton_1d"]["Size"] = UDim2.new(0, 261, 0, 40);
-LMG2L["DropdownButton_1d"]["Text"] = [[]];
-LMG2L["DropdownButton_1d"]["Name"] = [[DropdownButton]];
+LMG2L["DropdownButton_17"] = Instance.new("TextButton", LMG2L["Card_f"]);
+LMG2L["DropdownButton_17"]["BorderSizePixel"] = 0;
+LMG2L["DropdownButton_17"]["TextSize"] = 12;
+LMG2L["DropdownButton_17"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+LMG2L["DropdownButton_17"]["FontFace"] = Font.new([[rbxasset://fonts/families/Arial.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+LMG2L["DropdownButton_17"]["BackgroundTransparency"] = 1;
+LMG2L["DropdownButton_17"]["Size"] = UDim2.new(0, 261, 0, 40);
+LMG2L["DropdownButton_17"]["Text"] = [[]];
+LMG2L["DropdownButton_17"]["Name"] = [[DropdownButton]];
 
 
 -- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card.DropdownButton.UICorner
-LMG2L["UICorner_1e"] = Instance.new("UICorner", LMG2L["DropdownButton_1d"]);
-LMG2L["UICorner_1e"]["CornerRadius"] = UDim.new(0, 5);
+LMG2L["UICorner_18"] = Instance.new("UICorner", LMG2L["DropdownButton_17"]);
+LMG2L["UICorner_18"]["CornerRadius"] = UDim.new(0, 5);
 
 
 -- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card.DropdownButton.IconDropdown
-LMG2L["IconDropdown_1f"] = Instance.new("ImageLabel", LMG2L["DropdownButton_1d"]);
-LMG2L["IconDropdown_1f"]["BorderSizePixel"] = 0;
-LMG2L["IconDropdown_1f"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0);
--- LMG2L["IconDropdown_1f"]["ImageContent"] = ;
-LMG2L["IconDropdown_1f"]["Image"] = [[rbxassetid://2406617031]];
-LMG2L["IconDropdown_1f"]["Size"] = UDim2.new(0, 15, 0, 14);
-LMG2L["IconDropdown_1f"]["BackgroundTransparency"] = 1;
-LMG2L["IconDropdown_1f"]["Name"] = [[IconDropdown]];
-LMG2L["IconDropdown_1f"]["Position"] = UDim2.new(0, 236, 0, 12);
+LMG2L["IconDropdown_19"] = Instance.new("ImageLabel", LMG2L["DropdownButton_17"]);
+LMG2L["IconDropdown_19"]["BorderSizePixel"] = 0;
+LMG2L["IconDropdown_19"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0);
+-- LMG2L["IconDropdown_19"]["ImageContent"] = ;
+LMG2L["IconDropdown_19"]["Image"] = [[rbxassetid://2406617031]];
+LMG2L["IconDropdown_19"]["Size"] = UDim2.new(0, 15, 0, 14);
+LMG2L["IconDropdown_19"]["BackgroundTransparency"] = 1;
+LMG2L["IconDropdown_19"]["Name"] = [[IconDropdown]];
+LMG2L["IconDropdown_19"]["Position"] = UDim2.new(0, 236, 0, 12);
+
+
+-- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card.Tag
+LMG2L["Tag_1a"] = Instance.new("TextLabel", LMG2L["Card_f"]);
+LMG2L["Tag_1a"]["BorderSizePixel"] = 0;
+LMG2L["Tag_1a"]["TextSize"] = 9;
+LMG2L["Tag_1a"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0);
+LMG2L["Tag_1a"]["FontFace"] = Font.new([[rbxasset://fonts/families/Arial.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+LMG2L["Tag_1a"]["TextColor3"] = Color3.fromRGB(246, 246, 246);
+LMG2L["Tag_1a"]["Size"] = UDim2.new(0, 32, 0, 16);
+LMG2L["Tag_1a"]["Text"] = [[GET]];
+LMG2L["Tag_1a"]["Name"] = [[Tag]];
+LMG2L["Tag_1a"]["Position"] = UDim2.new(0, 4, 0, 4);
+
+
+-- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card.Tag.UICorner
+LMG2L["UICorner_1b"] = Instance.new("UICorner", LMG2L["Tag_1a"]);
+LMG2L["UICorner_1b"]["CornerRadius"] = UDim.new(0, 5);
+
+
+-- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card.Tag.UIStroke
+LMG2L["UIStroke_1c"] = Instance.new("UIStroke", LMG2L["Tag_1a"]);
+LMG2L["UIStroke_1c"]["Transparency"] = 0.5;
+LMG2L["UIStroke_1c"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
+LMG2L["UIStroke_1c"]["Thickness"] = 0.5;
+LMG2L["UIStroke_1c"]["Color"] = Color3.fromRGB(86, 86, 86);
+
+
+-- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card.Output
+LMG2L["Output_1d"] = Instance.new("TextLabel", LMG2L["Card_f"]);
+LMG2L["Output_1d"]["BorderSizePixel"] = 0;
+LMG2L["Output_1d"]["TextSize"] = 9;
+LMG2L["Output_1d"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+LMG2L["Output_1d"]["BackgroundColor3"] = Color3.fromRGB(255, 255, 255);
+LMG2L["Output_1d"]["FontFace"] = Font.new([[rbxasset://fonts/families/Inconsolata.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+LMG2L["Output_1d"]["TextColor3"] = Color3.fromRGB(218, 218, 218);
+LMG2L["Output_1d"]["BackgroundTransparency"] = 1;
+LMG2L["Output_1d"]["Size"] = UDim2.new(0, 250, 0, 24);
+LMG2L["Output_1d"]["Text"] = [[ [REQUEST] GET https://...]];
+LMG2L["Output_1d"]["Name"] = [[Output]];
+LMG2L["Output_1d"]["Position"] = UDim2.new(0, 6, 0, 98);
+
+
+-- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card.Output.UICorner
+LMG2L["UICorner_1e"] = Instance.new("UICorner", LMG2L["Output_1d"]);
+LMG2L["UICorner_1e"]["CornerRadius"] = UDim.new(0, 5);
+
+
+-- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card.Output.UIStroke
+LMG2L["UIStroke_1f"] = Instance.new("UIStroke", LMG2L["Output_1d"]);
+LMG2L["UIStroke_1f"]["Transparency"] = 0.5;
+LMG2L["UIStroke_1f"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
+LMG2L["UIStroke_1f"]["Thickness"] = 0.5;
+LMG2L["UIStroke_1f"]["Color"] = Color3.fromRGB(86, 86, 86);
 
 
 -- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card.Name
@@ -301,19 +302,19 @@ LMG2L["Name_20"]["Name"] = [[Name]];
 LMG2L["Name_20"]["Position"] = UDim2.new(0, 42, 0, 4);
 
 
--- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card.Path
-LMG2L["Path_21"] = Instance.new("TextLabel", LMG2L["Card_f"]);
-LMG2L["Path_21"]["BorderSizePixel"] = 0;
-LMG2L["Path_21"]["TextSize"] = 10;
-LMG2L["Path_21"]["TextXAlignment"] = Enum.TextXAlignment.Left;
-LMG2L["Path_21"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0);
-LMG2L["Path_21"]["FontFace"] = Font.new([[rbxasset://fonts/families/Inconsolata.json]], Enum.FontWeight.Regular, Enum.FontStyle.Normal);
-LMG2L["Path_21"]["TextColor3"] = Color3.fromRGB(158, 158, 158);
-LMG2L["Path_21"]["BackgroundTransparency"] = 1;
-LMG2L["Path_21"]["Size"] = UDim2.new(0, 194, 0, 14);
-LMG2L["Path_21"]["Text"] = [[/UI/Source.lua]];
-LMG2L["Path_21"]["Name"] = [[Path]];
-LMG2L["Path_21"]["Position"] = UDim2.new(0, 4, 0, 22);
+-- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card.JudulDesc
+LMG2L["JudulDesc_21"] = Instance.new("TextLabel", LMG2L["Card_f"]);
+LMG2L["JudulDesc_21"]["BorderSizePixel"] = 0;
+LMG2L["JudulDesc_21"]["TextSize"] = 9;
+LMG2L["JudulDesc_21"]["TextXAlignment"] = Enum.TextXAlignment.Left;
+LMG2L["JudulDesc_21"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0);
+LMG2L["JudulDesc_21"]["FontFace"] = Font.new([[rbxasset://fonts/families/Arial.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+LMG2L["JudulDesc_21"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+LMG2L["JudulDesc_21"]["BackgroundTransparency"] = 1;
+LMG2L["JudulDesc_21"]["Size"] = UDim2.new(0, 146, 0, 14);
+LMG2L["JudulDesc_21"]["Text"] = [[NOTE]];
+LMG2L["JudulDesc_21"]["Name"] = [[JudulDesc]];
+LMG2L["JudulDesc_21"]["Position"] = UDim2.new(0, 6, 0, 42);
 
 
 -- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card.Garis
@@ -533,27 +534,28 @@ LMG2L["UICorner_3e"] = Instance.new("UICorner", LMG2L["Header_3d"]);
 LMG2L["UICorner_3e"]["CornerRadius"] = UDim.new(0, 12);
 
 
--- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.Header.MinimalButton
-LMG2L["MinimalButton_3f"] = Instance.new("TextButton", LMG2L["Header_3d"]);
-LMG2L["MinimalButton_3f"]["BorderSizePixel"] = 0;
-LMG2L["MinimalButton_3f"]["TextSize"] = 18;
-LMG2L["MinimalButton_3f"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
-LMG2L["MinimalButton_3f"]["BackgroundColor3"] = Color3.fromRGB(38, 38, 38);
-LMG2L["MinimalButton_3f"]["BackgroundTransparency"] = 0.5;
-LMG2L["MinimalButton_3f"]["Size"] = UDim2.new(0, 24, 0, 24);
-LMG2L["MinimalButton_3f"]["Text"] = [[-]];
-LMG2L["MinimalButton_3f"]["Name"] = [[MinimalButton]];
-LMG2L["MinimalButton_3f"]["Position"] = UDim2.new(0, 244, 0, 2);
+-- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.Header.CloseButton
+LMG2L["CloseButton_3f"] = Instance.new("TextButton", LMG2L["Header_3d"]);
+LMG2L["CloseButton_3f"]["BorderSizePixel"] = 0;
+LMG2L["CloseButton_3f"]["TextSize"] = 12;
+LMG2L["CloseButton_3f"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+LMG2L["CloseButton_3f"]["BackgroundColor3"] = Color3.fromRGB(38, 38, 38);
+LMG2L["CloseButton_3f"]["FontFace"] = Font.new([[rbxasset://fonts/families/Arial.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal);
+LMG2L["CloseButton_3f"]["BackgroundTransparency"] = 0.5;
+LMG2L["CloseButton_3f"]["Size"] = UDim2.new(0, 20, 0, 20);
+LMG2L["CloseButton_3f"]["Text"] = [[🫪]];
+LMG2L["CloseButton_3f"]["Name"] = [[CloseButton]];
+LMG2L["CloseButton_3f"]["Position"] = UDim2.new(0, 245, 0, 4);
 
 
--- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.Header.MinimalButton.UICorner
-LMG2L["UICorner_40"] = Instance.new("UICorner", LMG2L["MinimalButton_3f"]);
-LMG2L["UICorner_40"]["CornerRadius"] = UDim.new(0, 50);
+-- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.Header.CloseButton.UICorner
+LMG2L["UICorner_40"] = Instance.new("UICorner", LMG2L["CloseButton_3f"]);
+LMG2L["UICorner_40"]["CornerRadius"] = UDim.new(0, 5);
 
 
--- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.Header.MinimalButton.UIStroke
-LMG2L["UIStroke_41"] = Instance.new("UIStroke", LMG2L["MinimalButton_3f"]);
-LMG2L["UIStroke_41"]["Transparency"] = 0.85;
+-- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.Header.CloseButton.UIStroke
+LMG2L["UIStroke_41"] = Instance.new("UIStroke", LMG2L["CloseButton_3f"]);
+LMG2L["UIStroke_41"]["Transparency"] = 0.5;
 LMG2L["UIStroke_41"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
 LMG2L["UIStroke_41"]["Thickness"] = 0.5;
 LMG2L["UIStroke_41"]["Color"] = Color3.fromRGB(86, 86, 86);
@@ -573,9 +575,16 @@ LMG2L["UIGradient_43"] = Instance.new("UIGradient", LMG2L["Garis_42"]);
 LMG2L["UIGradient_43"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(0, 0, 0)),ColorSequenceKeypoint.new(0.500, Color3.fromRGB(85, 85, 85)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(0, 0, 0))};
 
 
--- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.Header.UIGradient
-LMG2L["UIGradient_44"] = Instance.new("UIGradient", LMG2L["Header_3d"]);
-LMG2L["UIGradient_44"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(0, 0, 0)),ColorSequenceKeypoint.new(0.500, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(0, 0, 0))};
+-- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.Header.Logo
+LMG2L["Logo_44"] = Instance.new("ImageLabel", LMG2L["Header_3d"]);
+LMG2L["Logo_44"]["BorderSizePixel"] = 0;
+LMG2L["Logo_44"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0);
+-- LMG2L["Logo_44"]["ImageContent"] = ;
+LMG2L["Logo_44"]["Image"] = [[rbxassetid://100744567525223]];
+LMG2L["Logo_44"]["Size"] = UDim2.new(0, 20, 0, 20);
+LMG2L["Logo_44"]["BackgroundTransparency"] = 1;
+LMG2L["Logo_44"]["Name"] = [[Logo]];
+LMG2L["Logo_44"]["Position"] = UDim2.new(0, 5, 0, 4);
 
 
 -- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.Header.Title
@@ -593,221 +602,80 @@ LMG2L["Title_45"]["Name"] = [[Title]];
 LMG2L["Title_45"]["Position"] = UDim2.new(0, 28, 0, 6);
 
 
--- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.Header.Logo
-LMG2L["Logo_46"] = Instance.new("ImageLabel", LMG2L["Header_3d"]);
-LMG2L["Logo_46"]["BorderSizePixel"] = 0;
-LMG2L["Logo_46"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0);
--- LMG2L["Logo_46"]["ImageContent"] = ;
-LMG2L["Logo_46"]["Image"] = [[rbxassetid://100744567525223]];
-LMG2L["Logo_46"]["Size"] = UDim2.new(0, 20, 0, 20);
-LMG2L["Logo_46"]["BackgroundTransparency"] = 1;
-LMG2L["Logo_46"]["Name"] = [[Logo]];
-LMG2L["Logo_46"]["Position"] = UDim2.new(0, 5, 0, 4);
+-- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.Header.UIGradient
+LMG2L["UIGradient_46"] = Instance.new("UIGradient", LMG2L["Header_3d"]);
+LMG2L["UIGradient_46"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(0, 0, 0)),ColorSequenceKeypoint.new(0.500, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(0, 0, 0))};
+
+
+-- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.Header.BackButton
+LMG2L["BackButton_47"] = Instance.new("TextButton", LMG2L["Header_3d"]);
+LMG2L["BackButton_47"]["BorderSizePixel"] = 0;
+LMG2L["BackButton_47"]["TextSize"] = 16;
+LMG2L["BackButton_47"]["TextColor3"] = Color3.fromRGB(255, 255, 255);
+LMG2L["BackButton_47"]["BackgroundColor3"] = Color3.fromRGB(38, 38, 38);
+LMG2L["BackButton_47"]["BackgroundTransparency"] = 0.5;
+LMG2L["BackButton_47"]["Size"] = UDim2.new(0, 20, 0, 20);
+LMG2L["BackButton_47"]["Text"] = [[-]];
+LMG2L["BackButton_47"]["Name"] = [[BackButton]];
+LMG2L["BackButton_47"]["Position"] = UDim2.new(0, 220, 0, 4);
+
+
+-- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.Header.BackButton.UICorner
+LMG2L["UICorner_48"] = Instance.new("UICorner", LMG2L["BackButton_47"]);
+LMG2L["UICorner_48"]["CornerRadius"] = UDim.new(0, 5);
+
+
+-- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.Header.BackButton.UIStroke
+LMG2L["UIStroke_49"] = Instance.new("UIStroke", LMG2L["BackButton_47"]);
+LMG2L["UIStroke_49"]["Transparency"] = 0.5;
+LMG2L["UIStroke_49"]["ApplyStrokeMode"] = Enum.ApplyStrokeMode.Border;
+LMG2L["UIStroke_49"]["Thickness"] = 0.5;
+LMG2L["UIStroke_49"]["Color"] = Color3.fromRGB(86, 86, 86);
 
 
 -- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.Background
-LMG2L["Background_47"] = Instance.new("Frame", LMG2L["Panel_3"]);
-LMG2L["Background_47"]["ZIndex"] = 2;
-LMG2L["Background_47"]["BorderSizePixel"] = 0;
-LMG2L["Background_47"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0);
-LMG2L["Background_47"]["Size"] = UDim2.new(0, 270, 0, 272);
-LMG2L["Background_47"]["Position"] = UDim2.new(0, 0, 0, 28);
-LMG2L["Background_47"]["Name"] = [[Background]];
+LMG2L["Background_4a"] = Instance.new("Frame", LMG2L["Panel_3"]);
+LMG2L["Background_4a"]["ZIndex"] = 2;
+LMG2L["Background_4a"]["BorderSizePixel"] = 0;
+LMG2L["Background_4a"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0);
+LMG2L["Background_4a"]["Size"] = UDim2.new(0, 270, 0, 272);
+LMG2L["Background_4a"]["Position"] = UDim2.new(0, 0, 0, 28);
+LMG2L["Background_4a"]["Name"] = [[Background]];
 
 
 -- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.Background.UICorner
-LMG2L["UICorner_48"] = Instance.new("UICorner", LMG2L["Background_47"]);
-LMG2L["UICorner_48"]["CornerRadius"] = UDim.new(0, 12);
+LMG2L["UICorner_4b"] = Instance.new("UICorner", LMG2L["Background_4a"]);
+LMG2L["UICorner_4b"]["CornerRadius"] = UDim.new(0, 12);
 
--- ====================================================================
--- NARAKU UI MAIN PANEL SYSTEM (LOGIC ONLY)
--- Author: Kaizen & Assistant
--- Targeted Architecture: LMG2L hardcoded table structure
--- ====================================================================
 
--- Services
-local TweenService = game:GetService("TweenService")
-local RunService = game:GetService("RunService")
-local Lighting = game:GetService("Lighting")
-local UserInputService = game:GetService("UserInputService")
-local CoreGui = game:GetService("CoreGui")
+-- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.OpenButton
+LMG2L["OpenButton_4c"] = Instance.new("ImageButton", LMG2L["NarakuUI_2"]);
+LMG2L["OpenButton_4c"]["BorderSizePixel"] = 0;
+LMG2L["OpenButton_4c"]["BackgroundTransparency"] = 0.2;
+-- LMG2L["OpenButton_4c"]["ImageContent"] = ;
+LMG2L["OpenButton_4c"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0);
+LMG2L["OpenButton_4c"]["Image"] = [[rbxassetid://100744567525223]];
+LMG2L["OpenButton_4c"]["Size"] = UDim2.new(0, 34, 0, 34);
+LMG2L["OpenButton_4c"]["Name"] = [[OpenButton]];
+LMG2L["OpenButton_4c"]["Position"] = UDim2.new(0, 20, 0, 22);
 
--- Variables & State
-local isMinimized = false
-local isDragging = false
-local dragInput, dragStart, startPos
 
--- Tween Configurations
-local TWEEN_INFO_FAST = TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
-local TWEEN_INFO_SMOOTH = TweenInfo.new(0.5, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
+-- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.OpenButton.UICorner
+LMG2L["UICorner_4d"] = Instance.new("UICorner", LMG2L["OpenButton_4c"]);
+LMG2L["UICorner_4d"]["CornerRadius"] = UDim.new(0, 5);
 
--- Fetch UI Instances from target hierarchy
-local ScreenGui = LMG2L["ScreenGui_1"]
-local Panel = LMG2L["Panel_3"]
-local Header = LMG2L["Header_3d"]
-local MinimalButton = LMG2L["MinimalButton_3f"]
-local SearchBox = LMG2L["SearchBox_4"]
-local ScrollingTab = LMG2L["ScrollingTab_26"]
-local ScrollingFrame = LMG2L["ScrollingFrame_c"]
-local Imagebackground = LMG2L["Imagebackground_8"]
-local Background = LMG2L["Background_47"]
-local UIStroke = LMG2L["UIStroke_23"]
-local UIGradient = LMG2L["UIGradient_24"]
 
--- Fetch or Create Single BlurEffect instance in Lighting
-local BlurEffect = Lighting:FindFirstChild("NarakuUI_Blur")
-if not BlurEffect then
-	BlurEffect = Instance.new("BlurEffect")
-	BlurEffect.Name = "NarakuUI_Blur"
-	BlurEffect.Size = 0
-	BlurEffect.Parent = Lighting
-end
+-- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.OpenButton.UIStroke
+LMG2L["UIStroke_4e"] = Instance.new("UIStroke", LMG2L["OpenButton_4c"]);
+LMG2L["UIStroke_4e"]["Transparency"] = 0.85;
+LMG2L["UIStroke_4e"]["Thickness"] = 2;
 
--- ====================================================================
--- SYSTEM FUNCTIONS
--- ====================================================================
 
--- 1. Reparent ScreenGui to CoreGui
-local function ReparentToCoreGui()
-	ScreenGui.Parent = CoreGui
-end
+-- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.OpenButton.UIGradient
+LMG2L["UIGradient_4f"] = Instance.new("UIGradient", LMG2L["OpenButton_4c"]);
+LMG2L["UIGradient_4f"]["Rotation"] = 45;
+LMG2L["UIGradient_4f"]["Color"] = ColorSequence.new{ColorSequenceKeypoint.new(0.000, Color3.fromRGB(0, 0, 0)),ColorSequenceKeypoint.new(0.500, Color3.fromRGB(255, 255, 255)),ColorSequenceKeypoint.new(1.000, Color3.fromRGB(0, 0, 0))};
 
--- 2. Sync Heights for Panel and Background Layers
-local function UpdateBackground(targetHeight)
-	local targetSizePanel = UDim2.new(0, 270, 0, targetHeight)
-	local targetSizeBg = UDim2.new(0, 270, 0, targetHeight)
-	local targetSizeImageBg = UDim2.new(0, 270, 0, targetHeight)
-	
-	TweenService:Create(Panel, TWEEN_INFO_FAST, {Size = targetSizePanel}):Play()
-	TweenService:Create(Background, TWEEN_INFO_FAST, {Size = UDim2.new(0, 270, 0, math.max(0, targetHeight - 28))}):Play()
-	TweenService:Create(Imagebackground, TWEEN_INFO_FAST, {Size = targetSizeImageBg}):Play()
-end
 
--- 3. Blur Management
-local function UpdateBlur(targetSize)
-	TweenService:Create(BlurEffect, TWEEN_INFO_FAST, {Size = targetSize}):Play()
-end
-
--- 4. Content Visibility Control
-local function UpdateContent(visible)
-	SearchBox.Visible = visible
-	ScrollingTab.Visible = visible
-	ScrollingFrame.Visible = visible
-end
-
--- 5. Panel Minimization
-local function MinimizePanel()
-	isMinimized = true
-	MinimalButton.Text = "+"
-	UpdateContent(false)
-	UpdateBackground(40)
-	UpdateBlur(0)
-end
-
--- 6. Panel Restoration
-local function RestorePanel()
-	isMinimized = false
-	MinimalButton.Text = "-"
-	UpdateBackground(300)
-	UpdateBlur(18)
-	task.delay(0.1, function()
-		if not isMinimized then
-			UpdateContent(true)
-		end
-	end)
-end
-
--- 7. Initial Entry Animation
-local function OpenPanel()
-	Panel.Position = UDim2.new(0, 40, 0, 25)
-	Panel.Size = UDim2.new(0, 0, 0, 0)
-	UpdateContent(false)
-	
-	TweenService:Create(Panel, TWEEN_INFO_SMOOTH, {Size = UDim2.new(0, 270, 0, 300)}):Play()
-	TweenService:Create(Background, TWEEN_INFO_SMOOTH, {Size = UDim2.new(0, 270, 0, 272)}):Play()
-	TweenService:Create(Imagebackground, TWEEN_INFO_SMOOTH, {Size = UDim2.new(0, 270, 0, 300)}):Play()
-	
-	UpdateBlur(18)
-	
-	task.delay(0.3, function()
-		if not isMinimized then
-			UpdateContent(true)
-		end
-	end)
-end
-
--- 8. Continuous Rotating Border
-local function RotateStroke()
-	RunService.RenderStepped:Connect(function(deltaTime)
-		UIGradient.Rotation = (UIGradient.Rotation + (180 * deltaTime)) % 360
-	end)
-end
-
--- 9. Universal Dragging Mechanism (Mouse & Touch Engine)
-local function EnableDrag()
-	Panel.Active = true
-	pcall(function()
-		Panel.Draggable = true
-	end)
-	
-	Header.InputBegan:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-			isDragging = true
-			dragStart = input.Position
-			startPos = Panel.Position
-
-			input.Changed:Connect(function()
-				if input.UserInputState == Enum.UserInputState.End then
-					isDragging = false
-				end
-			end)
-		end
-	end)
-
-	Header.InputChanged:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-			dragInput = input
-		end
-	end)
-
-	UserInputService.InputChanged:Connect(function(input)
-		if input == dragInput and isDragging then
-			local delta = input.Position - dragStart
-			TweenService:Create(Panel, TweenInfo.new(0.08, Enum.EasingStyle.Linear), {
-				Position = UDim2.new(
-					startPos.X.Scale,
-					startPos.X.Offset + delta.X,
-					startPos.Y.Scale,
-					startPos.Y.Offset + delta.Y
-				)
-			}):Play()
-		end
-	end)
-end
-
--- 10. Event Wiring
-local function BindEvents()
-	MinimalButton.MouseButton1Click:Connect(function()
-		if isMinimized then
-			RestorePanel()
-		else
-			MinimizePanel()
-		end
-	end)
-end
-
--- ====================================================================
--- INITIALIZATION
--- ====================================================================
-local function Init()
-	ReparentToCoreGui()
-	RotateStroke()
-	EnableDrag()
-	BindEvents()
-	OpenPanel()
-end
-
--- Execute System
-Init()
 
 return LMG2L["ScreenGui_1"], require;
