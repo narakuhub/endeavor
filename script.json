@@ -1,18 +1,44 @@
 {
   "Category": {
-    "CHAOS": [],
-    "UTILITY": [],
+    "CHAOS": [
+      {
+        "Name_20": "LASER MAP FE",
+        "Path_10": "/Chaos/LaserMapFE.lua",
+        "Description_11": "Script FE visual manipulasi laser arena yang memberikan efek kehancuran dramatis dan kekacauan visual secara universal pada map target.",
+        "url": "https://raw.githubusercontent.com/KNTLX69/SXTHR666/refs/heads/main/SIEXTHER-HYTAMKAN"
+      },
+      {
+        "Name_20": "FAKE DONATE",
+        "Path_10": "/Chaos/FakeDonate.lua",
+        "Description_11": "Utility simulator prank visual untuk memunculkan notifikasi serta efek transaksi donasi palsu secara instan untuk tujuan hiburan.",
+        "url": "https://raw.githubusercontent.com/FayintXhub/FayintExploit/refs/heads/main/Fake-Donate"
+      }
+    ],
+    "UTILITY": [
+      {
+        "Name_20": "LYNXX",
+        "Path_10": "/Utility/Lynxx.lua",
+        "Description_11": "Suite modul utility multifungsi modern yang dilengkapi fitur debugging, monitoring kinerja, dan fleksibilitas eksekusi tingkat tinggi.",
+        "url": "https://raw.githubusercontent.com/4LynxX/Lynx/refs/heads/main/LynxxMain.lua"
+      },
+      {
+        "Name_20": "DROP KICK FE",
+        "Path_10": "/Utility/DropKickFE.lua",
+        "Description_11": "Tools interaksi karakter Filtering Enabled untuk memberikan aksi eksekusi fisik kustom dengan simulasi fisik real-time.",
+        "url": "https://raw.githubusercontent.com/platinww/CrustyMain/refs/heads/main/universal/DropKick.lua"
+      }
+    ],
     "PLUGIN": [
       {
         "Name_20": "Cobalt Plugin",
         "Path_10": "/Plugin/Cobalt.luau",
-        "Description_11": "Cobalt tool plugin untuk debugging dan development.",
+        "Description_11": "Cobalt tool plugin untuk debugging dan development tingkat lanjut bagi pembuat konten dan pengembang environment.",
         "url": "https://github.com/notpoiu/cobalt/releases/latest/download/Cobalt.luau"
       },
       {
         "Name_20": "Dex Plus Plus",
         "Path_10": "/Plugin/DexPlusPlus.lua",
-        "Description_11": "Explorer & Instance inspection tool versi lanjutan.",
+        "Description_11": "Explorer & Instance inspection tool versi lanjutan untuk memeriksa hierarki game, properti elemen, dan struktur data lokal secara mendalam.",
         "url": "https://github.com/AZYsGithub/DexPlusPlus/releases/latest/download/out.lua"
       }
     ],
@@ -20,8 +46,20 @@
       {
         "Name_20": "Zero Universal",
         "Path_10": "/Players/ZeroUniversal.lua",
-        "Description_11": "Universal player script suite.",
+        "Description_11": "Universal player script suite lengkap dengan fitur kustomisasi pergerakan, peningkatan performa karakter, dan modul fungsional harian.",
         "url": "https://raw.githubusercontent.com/kkkkkk-dev/ZeroExploits/main/ZeroUniversal.lua"
+      },
+      {
+        "Name_20": "FLING",
+        "Path_10": "/Players/Fling.lua",
+        "Description_11": "Script manipulasi physics karakter untuk mendorong atau melempar target dengan momentum tinggi melalui interaksi benturan fisik.",
+        "url": "https://raw.githubusercontent.com/narakuhub/narakuhub/refs/heads/main/fling.lua"
+      },
+      {
+        "Name_20": "FLY V3",
+        "Path_10": "/Players/FlyV3.lua",
+        "Description_11": "Modul kontrol penerbangan karakter versi 3 dengan respon pergerakan yang mulus, penyesuaian kecepatan penerbangan, serta stabilitas arah.",
+        "url": "https://raw.githubusercontent.com/narakuhub/narakuhub/refs/heads/main/FlyV3.lua"
       }
     ]
   }
