@@ -4,23 +4,23 @@
     "UTILITY": [],
     "PLUGIN": [
       {
-        "name": "Cobalt Plugin",
-        "path": "/Plugin/Cobalt.luau",
-        "description": "Cobalt tool plugin untuk debugging dan development.",
+        "Name_20": "Cobalt Plugin",
+        "Path_10": "/Plugin/Cobalt.luau",
+        "Description_11": "Cobalt tool plugin untuk debugging dan development.",
         "url": "https://github.com/notpoiu/cobalt/releases/latest/download/Cobalt.luau"
       },
       {
-        "name": "Dex Plus Plus",
-        "path": "/Plugin/DexPlusPlus.lua",
-        "description": "Explorer & Instance inspection tool versi lanjutan.",
+        "Name_20": "Dex Plus Plus",
+        "Path_10": "/Plugin/DexPlusPlus.lua",
+        "Description_11": "Explorer & Instance inspection tool versi lanjutan.",
         "url": "https://github.com/AZYsGithub/DexPlusPlus/releases/latest/download/out.lua"
       }
     ],
     "PLAYERS": [
       {
-        "name": "Zero Universal",
-        "path": "/Players/ZeroUniversal.lua",
-        "description": "Universal player script suite.",
+        "Name_20": "Zero Universal",
+        "Path_10": "/Players/ZeroUniversal.lua",
+        "Description_11": "Universal player script suite.",
         "url": "https://raw.githubusercontent.com/kkkkkk-dev/ZeroExploits/main/ZeroUniversal.lua"
       }
     ]
