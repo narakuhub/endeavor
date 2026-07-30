@@ -1,75 +1,216 @@
---[=[
-    Project: NARAKU SOURCE
-    File: Loader.lua
-    Description: Main entry point loader for NarakuUI hub.
-]=]
+--[[
+=========================================================
+ Project : NARAKU SOURCE
+ File    : Loader.lua
+ Author  : NarakuHub
+
+ Description:
+ Main Entry Point
+=========================================================
+]]
 
 local HttpService = game:GetService("HttpService")
 
--- UBAH URL DI BAWAH INI SESUAI DENGAN LINK REPOSITORI GITHUB ANDA (RAW LINK)
-local GITHUB_RAW_URL = "https://raw.githubusercontent.com/narakuhub/vetrou/refs/heads/main/UI/UI.lua"
+---------------------------------------------------------
+-- CONFIG
+---------------------------------------------------------
 
-local function loadScript(path)
-    local success, result = pcall(function()
-        return game:HttpGet(GITHUB_RAW_URL .. path)
-    end)
-    
-    if not success or not result then
-        warn("[NARAKU LOADER]: Gagal mengunduh file -> " .. path)
-        return nil
-    end
-    
-    local func, err = loadstring(result)
-    if not func then
-        warn("[NARAKU LOADER]: Gagal melakukan kompilasi file " .. path .. " | Error: " .. tostring(err))
-        return nil
-    end
-    
-    return func()
+local BASE_URL = "https://raw.githubusercontent.com/narakuhub/vetrou/refs/heads/main/"
+
+---------------------------------------------------------
+-- LOADER
+---------------------------------------------------------
+
+local Loader = {}
+
+---------------------------------------------------------
+-- MODULE CACHE
+---------------------------------------------------------
+
+local Cache = {
+	UI = nil,
+	Source = nil,
+	Bypass = nil,
+	MainPanel = nil,
+	SystemCard = nil
+}
+
+---------------------------------------------------------
+-- PRINT
+---------------------------------------------------------
+
+local function Log(...)
+	print("[NARAKU]", ...)
 end
 
-print("[NARAKU LOADER]: Memulai pemuatan skrip...")
-
--- 1. Jalankan Bypass terlebih dahulu (jika ada proteksi game)
-local bypassModule = loadScript("Bypass.lua")
-if bypassModule then
-    print("[NARAKU LOADER]: Bypass berhasil dimuat.")
+local function Warn(...)
+	warn("[NARAKU]", ...)
 end
 
--- 2. Muat konfigurasi/data dari Source.json
-local sourceData = nil
-local successJson, jsonResult = pcall(function()
-    return game:HttpGet(GITHUB_RAW_URL .. "Source.json")
-end)
-if successJson and jsonResult then
-    local decodeSuccess, decoded = pcall(function()
-        return HttpService:JSONDecode(jsonResult)
-    end)
-    if decodeSuccess then
-        sourceData = decoded
-        print("[NARAKU LOADER]: Source.json berhasil dimuat.")
-    end
+---------------------------------------------------------
+-- DOWNLOAD FILE
+---------------------------------------------------------
+
+local function Download(path)
+
+	local success, response = pcall(function()
+		return game:HttpGet(BASE_URL .. path)
+	end)
+
+	if not success then
+		Warn("Download Failed :", path)
+		return nil
+	end
+
+	return response
+
 end
 
--- 3. Muat komponen antarmuka (UI)
--- Muat UI.lua terlebih dahulu (Wajib menggunakan raw link sesuai permintaan)
-local UI = loadScript("UI/UI.lua")
-if not UI then
-    warn("[NARAKU LOADER]: Gagal memuat UI.lua, proses dihentikan.")
-    return
+---------------------------------------------------------
+-- LOAD MODULE
+---------------------------------------------------------
+
+local function LoadModule(path)
+
+	local source = Download(path)
+
+	if not source then
+		return nil
+	end
+
+	local chunk, err = loadstring(source)
+
+	if not chunk then
+		Warn("Compile Failed :", path)
+		Warn(err)
+		return nil
+	end
+
+	local success, result = pcall(chunk)
+
+	if not success then
+		Warn("Runtime Failed :", path)
+		Warn(result)
+		return nil
+	end
+
+	Log("Loaded :", path)
+
+	return result
+
 end
 
--- Muat MainPanel.lua
-local MainPanel = loadScript("UI/MainPanel.lua")
-if MainPanel and type(MainPanel.init) == "function" then
-    MainPanel.init()
-    print("[NARAKU LOADER]: MainPanel berhasil diinisialisasi.")
+---------------------------------------------------------
+-- LOAD JSON
+---------------------------------------------------------
+
+local function LoadJSON(path)
+
+	local response = Download(path)
+
+	if not response then
+		return nil
+	end
+
+	local success, decoded = pcall(function()
+
+		return HttpService:JSONDecode(response)
+
+	end)
+
+	if not success then
+
+		Warn("JSON Decode Failed :", path)
+
+		return nil
+
+	end
+
+	Log("Loaded :", path)
+
+	return decoded
+
 end
 
--- Muat SystemCard.lua (untuk kartu/fitur tambahan di dalam UI)
-local SystemCard = loadScript("UI/SystemCard.lua")
-if SystemCard then
-    print("[NARAKU LOADER]: SystemCard berhasil dimuat.")
+---------------------------------------------------------
+-- LOAD ORDER
+---------------------------------------------------------
+
+function Loader.Start()
+
+	Log("Initializing...")
+
+	-----------------------------------------------------
+	-- DATABASE
+	-----------------------------------------------------
+
+	Cache.Source = LoadJSON("Source.json")
+
+	-----------------------------------------------------
+	-- UI
+	-----------------------------------------------------
+
+	Cache.UI = LoadModule("UI/UI.lua")
+
+	if not Cache.UI then
+
+		Warn("UI Failed.")
+
+		return
+
+	end
+
+	-----------------------------------------------------
+	-- BYPASS
+	-----------------------------------------------------
+
+	Cache.Bypass = LoadModule("Bypass.lua")
+
+	-----------------------------------------------------
+	-- MAIN PANEL
+	-----------------------------------------------------
+
+	Cache.MainPanel = LoadModule("UI/MainPanel.lua")
+
+	-----------------------------------------------------
+	-- CARD
+	-----------------------------------------------------
+
+	Cache.SystemCard = LoadModule("UI/SystemCardClone.lua")
+
+	-----------------------------------------------------
+	-- INITIALIZE
+	-----------------------------------------------------
+
+	if Cache.Bypass and Cache.Bypass.init then
+
+		Cache.Bypass.init()
+
+	end
+
+	if Cache.MainPanel and Cache.MainPanel.init then
+
+		Cache.MainPanel.init(Cache.UI)
+
+	end
+
+	if Cache.SystemCard and Cache.SystemCard.init then
+
+		Cache.SystemCard.init(
+			Cache.UI,
+			Cache.Source
+		)
+
+	end
+
+	Log("Naraku Source Loaded Successfully.")
+
 end
 
-print("[NARAKU LOADER]: Semua komponen NARAKU SOURCE berhasil dimuat sepenuhnya!")
+---------------------------------------------------------
+-- START
+---------------------------------------------------------
+
+Loader.Start()
+
+return Loader
