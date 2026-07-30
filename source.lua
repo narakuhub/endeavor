@@ -1187,14 +1187,13 @@ local function BindSearchSystem()
 end
 
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
--- CARD CLONING & BINDING (FIXED OBJECT NAMES)
+-- CARD CLONING & BINDING (FIXED & FULLY SYNCHRONIZED)
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 local function CreateCardFromData(data)
 	local newCard = TemplateCard:Clone()
 	newCard.Name = "Card_" .. tostring(data.name or "Script")
 	newCard.Parent = Container
-	newCard.Visible = true
 	
 	-- Gunakan nama Instance spesifik beserta suffix nomornya!
 	local labelName = newCard:FindFirstChild("Name_20")
@@ -1205,15 +1204,24 @@ local function CreateCardFromData(data)
 	if labelPath then labelPath.Text = tostring(data.path or "/UI/Source.lua") end
 	if labelDesc then labelDesc.Text = tostring(data.description or "No description provided.") end
 	
-	-- Store Metadata
-	newCard:SetAttribute("Category", string.upper(tostring(data.category or "ALL")))
+	-- Paksa Category menjadi Uppercase agar cocok dengan Tab System
+	local rawCategory = tostring(data.category or "ALL"):upper()
+	newCard:SetAttribute("Category", rawCategory)
 	newCard:SetAttribute("ScriptName", string.lower(tostring(data.name or "")))
 	
-	-- Setup Modules
+	-- Setup Interaction Modules
 	SetupDropdownToggle(newCard)
 	SetupExecuteSystem(newCard, data)
 	
 	table.insert(ActiveCards, newCard)
+	
+	-- Tentukan Visibility langsung berdasarkan Tab Aktif saat ini
+	if ActiveCategory == "ALL" or ActiveCategory == rawCategory then
+		newCard.Visible = true
+	else
+		newCard.Visible = false
+	end
+	
 	return newCard
 end
 
