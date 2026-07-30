@@ -937,7 +937,7 @@ end
 Init()
 
 -- ====================================================================
--- NARAKU SOURCE — LOGIC SYSTEM COMPLETE (FIXED JSON & CARD CLONE)
+-- NARAKU SOURCE — LOGIC SYSTEM COMPLETE (FINAL HARDCODE 100% WORKING)
 -- TAB SYSTEM • SEARCH • CARD SYSTEM • EXPAND/COLLAPSE • EXECUTE & HTTP
 -- ====================================================================
 
@@ -966,22 +966,23 @@ local TabButtons = {
 	PLAYERS = LMG2L["PlayerButton_36"],
 }
 
--- Target Database URL (Valid Direct Raw URL)
+-- Direct Valid GitHub Raw URL (Tanpa Cache)
 local DATABASE_URL = "https://raw.githubusercontent.com/narakuhub/vetrou/main/script.json"
 
 -- System State
 local ActiveCategory = "ALL"
 local ActiveCards = {}
 
--- Hide Default Template Card
+-- Sembunyikan Card Template Bawaan
 if TemplateCard then
 	TemplateCard.Visible = false
 end
 
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
--- HELPER & SEARCH ENGINE
+-- HELPER & VISIBILITY CONTROL
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+-- Kontrol Elemen Dalam Card Saat Expand/Collapse (Persis Nama Hierarchy Studio)
 local function SetCardContentVisible(card, isVisible)
 	if not card then return end
 	local targetNames = {
@@ -1014,18 +1015,18 @@ local function FilterCards()
 end
 
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
--- INTERACTION MODULES
+-- DROPDOWN / EXPAND SYSTEM (DropdownButton_17 & IconDropdown_19)
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 local function SetupDropdownToggle(card)
-	local dropdownBtn = card:FindFirstChild("DropdownButton_17")
-	local iconDropdown = dropdownBtn and dropdownBtn:FindFirstChild("IconDropdown_19")
+	local dropdownBtn = card:FindFirstChild("DropdownButton_17", true) or card:FindFirstChild("DropdownButton", true)
+	local iconDropdown = dropdownBtn and (dropdownBtn:FindFirstChild("IconDropdown_19", true) or dropdownBtn:FindFirstChild("IconDropdown", true))
 	
 	if not dropdownBtn then return end
 	
 	local isExpanded = false
 	SetCardContentVisible(card, false)
-	card.Size = UDim2.new(0, 261, 0, 40)
+	card.Size = UDim2.new(0, 261, 0, 40) -- Kunci Ukuran Default Card (261x40)
 	
 	dropdownBtn.MouseButton1Click:Connect(function()
 		isExpanded = not isExpanded
@@ -1042,12 +1043,16 @@ local function SetupDropdownToggle(card)
 	end)
 end
 
-local function SetupExecuteSystem(card, data)
-	local execBtn = card:FindFirstChild("ExecuteButton_12")
-	local iconExec = execBtn and execBtn:FindFirstChild("IconExecute_14")
-	local outputLabel = card:FindFirstChild("Output_1d")
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- EXECUTE SYSTEM (ExecuteButton_12, IconExecute_14, Output_1d)
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+local function SetupExecuteSystem(card, scriptUrl)
+	local execBtn = card:FindFirstChild("ExecuteButton_12", true) or card:FindFirstChild("ExecuteButton", true)
+	local iconExec = execBtn and (execBtn:FindFirstChild("IconExecute_14", true) or execBtn:FindFirstChild("IconExecute", true))
+	local outputLabel = card:FindFirstChild("Output_1d", true) or card:FindFirstChild("Output", true)
 	
-	if not execBtn or not data or not data.url then return end
+	if not execBtn then return end
 	
 	local defaultOutput = outputLabel and outputLabel.Text or "[ SERVER ] READY"
 	local defaultImage = iconExec and iconExec.Image or ""
@@ -1055,10 +1060,14 @@ local function SetupExecuteSystem(card, data)
 	
 	execBtn.MouseButton1Click:Connect(function()
 		if isExecuting then return end
-		isExecuting = true
+		if not scriptUrl or scriptUrl == "" then
+			if outputLabel then outputLabel.Text = "[ ERROR ] URL SCRIPT KOSONG!" end
+			return
+		end
 		
+		isExecuting = true
 		if iconExec then iconExec.Image = "rbxassetid://10959947716" end
-		if outputLabel then outputLabel.Text = "[ SERVER ] GET " .. tostring(data.url) end
+		if outputLabel then outputLabel.Text = "[ SERVER ] GET " .. tostring(scriptUrl) end
 		
 		local rotationConn
 		if iconExec then
@@ -1068,17 +1077,21 @@ local function SetupExecuteSystem(card, data)
 		end
 		
 		task.spawn(function()
-			pcall(function()
-				local rawCode = game:HttpGet(data.url)
-				if rawCode and type(rawCode) == "string" then
-					local loadedFunc, loadErr = loadstring(rawCode)
-					if type(loadedFunc) == "function" then
-						loadedFunc()
-					else
-						warn("[NARAKU EXECUTE ERROR]: Syntax error in script ->", loadErr)
-					end
+			local success, err = pcall(function()
+				local rawCode = game:HttpGet(scriptUrl)
+				local loadedFunc = loadstring(rawCode)
+				if loadedFunc then
+					loadedFunc()
+				else
+					error("Syntax Error!")
 				end
 			end)
+			
+			if not success then
+				warn("[NARAKU EXECUTE ERROR]:", err)
+				if outputLabel then outputLabel.Text = "[ ERROR ] EXECUTION FAILED" end
+				task.wait(2)
+			end
 			
 			if rotationConn then rotationConn:Disconnect() end
 			if iconExec then
@@ -1092,35 +1105,45 @@ local function SetupExecuteSystem(card, data)
 end
 
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
--- CARD CLONING & BINDING
+-- CARD CLONING & BINDING SYSTEM
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 local function CreateCardFromData(data)
-	if not TemplateCard or not data then return end
+	if not TemplateCard or type(data) ~= "table" then return end
+	
+	-- Ekstraksi nilai aman (Mendukung key Name_20 maupun name biasa)
+	local sName = data.Name_20 or data.name or data.Name or "Script Card"
+	local sPath = data.Path_10 or data.path or data.Path or "/UI/Source.lua"
+	local sDesc = data.Description_11 or data.description or data.Description or "No description provided."
+	local sUrl = data.url or data.Url or data.URL or ""
+	local sCategory = data.category or data.Category or "ALL"
 	
 	local newCard = TemplateCard:Clone()
-	newCard.Name = "Card_" .. tostring(data.name or "Script")
+	newCard.Name = "Card_" .. tostring(sName)
 	newCard.Parent = Container
+	newCard.Size = UDim2.new(0, 261, 0, 40) -- Paksa ukuran card default
 	
-	-- Strict Hardcode Name Mapping
-	local labelName = newCard:FindFirstChild("Name_20")
-	local labelPath = newCard:FindFirstChild("Path_10")
-	local labelDesc = newCard:FindFirstChild("Description_11")
+	-- Cari TextLabel dengan Recursive Search
+	local labelName = newCard:FindFirstChild("Name_20", true) or newCard:FindFirstChild("Name", true)
+	local labelPath = newCard:FindFirstChild("Path_10", true) or newCard:FindFirstChild("Path", true)
+	local labelDesc = newCard:FindFirstChild("Description_11", true) or newCard:FindFirstChild("Description", true)
 	
-	if labelName then labelName.Text = tostring(data.name or "Script Card") end
-	if labelPath then labelPath.Text = tostring(data.path or "/UI/Source.lua") end
-	if labelDesc then labelDesc.Text = tostring(data.description or "No description provided.") end
+	-- Timpa Teks
+	if labelName and labelName:IsA("TextLabel") then labelName.Text = tostring(sName) end
+	if labelPath and labelPath:IsA("TextLabel") then labelPath.Text = tostring(sPath) end
+	if labelDesc and labelDesc:IsA("TextLabel") then labelDesc.Text = tostring(sDesc) end
 	
-	-- UpperCase Handling For Seamless Category Matching
-	local rawCategory = tostring(data.category or "ALL"):upper()
+	-- Simpan Attribute & Module Setup
+	local rawCategory = tostring(sCategory):upper()
 	newCard:SetAttribute("Category", rawCategory)
-	newCard:SetAttribute("ScriptName", string.lower(tostring(data.name or "")))
+	newCard:SetAttribute("ScriptName", string.lower(tostring(sName)))
 	
 	SetupDropdownToggle(newCard)
-	SetupExecuteSystem(newCard, data)
+	SetupExecuteSystem(newCard, sUrl)
 	
 	table.insert(ActiveCards, newCard)
 	
+	-- Filter Tampilan Awal
 	if ActiveCategory == "ALL" or ActiveCategory == rawCategory then
 		newCard.Visible = true
 	else
@@ -1131,22 +1154,23 @@ local function CreateCardFromData(data)
 end
 
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
--- DATABASE PARSER & POPULATE
+-- DATABASE PARSER & FETCH ENGINE
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 local function ProcessScriptItems(itemsList, categoryName)
 	if type(itemsList) ~= "table" then return end
 	for _, item in ipairs(itemsList) do
 		if type(item) == "table" then
-			item.category = categoryName
-			CreateCardFromData(item)
+			local itemCopy = {}
+			for k, v in pairs(item) do itemCopy[k] = v end
+			itemCopy.category = categoryName
+			CreateCardFromData(itemCopy)
 		end
 	end
 end
 
 local function FetchDatabase()
 	task.spawn(function()
-		-- Bypass HTTP Cache
 		local bypassUrl = DATABASE_URL .. "?t=" .. tostring(tick())
 		
 		local success, response = pcall(function()
@@ -1172,16 +1196,16 @@ local function FetchDatabase()
 				end
 				FilterCards()
 			else
-				warn("[NARAKU ERROR]: Failed to decode JSON response.")
+				warn("[NARAKU ERROR]: Gagal decode JSON.")
 			end
 		else
-			warn("[NARAKU ERROR]: Failed to fetch script.json database.")
+			warn("[NARAKU ERROR]: Gagal HttpGet JSON.")
 		end
 	end)
 end
 
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
--- INITIALIZATION
+-- TAB & SEARCH SYSTEM INITIALIZATION
 -- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 local function SetActiveTab(targetCat, activeBtn)
@@ -1203,7 +1227,7 @@ local function SetActiveTab(targetCat, activeBtn)
 end
 
 local function InitSystem()
-	-- Bind Tabs
+	-- Bind Events Tab
 	for cat, btn in pairs(TabButtons) do
 		if btn then
 			btn.MouseButton1Click:Connect(function()
@@ -1212,7 +1236,7 @@ local function InitSystem()
 		end
 	end
 	
-	-- Bind Search
+	-- Bind Events Search
 	if SearchBox then
 		local PLACEHOLDER = "Search Script.."
 		SearchBox.Focused:Connect(function()
@@ -1236,7 +1260,7 @@ local function InitSystem()
 		end)
 	end
 	
-	-- Default Tab
+	-- Default State Setup
 	if TabButtons.ALL then
 		SetActiveTab("ALL", TabButtons.ALL)
 	end
