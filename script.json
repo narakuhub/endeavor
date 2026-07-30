@@ -1,41 +1,27 @@
 {
   "Category": {
-    "Chaos": [
+    "CHAOS": [],
+    "UTILITY": [],
+    "PLUGIN": [
       {
-        "name": "Chaos Hub Main",
-        "path": "/Chaos/Main.lua",
-        "description": "Script chaos universal untuk auto farm dan trolling mode.",
-        "url": "https://raw.githubusercontent.com/narakuhub/vetrou/refs/heads/main/scripts/chaos.lua"
-      }
-    ],
-    "Utility": [
-      {
-        "name": "Infinite Yield",
-        "path": "/Utility/IY.lua",
-        "description": "Admin command paling populer dan lengkap untuk Roblox.",
-        "url": "https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"
+        "name": "Cobalt Plugin",
+        "path": "/Plugin/Cobalt.luau",
+        "description": "Cobalt tool plugin untuk debugging dan development.",
+        "url": "https://github.com/notpoiu/cobalt/releases/latest/download/Cobalt.luau"
       },
       {
-        "name": "Dex Explorer",
-        "path": "/Utility/Dex.lua",
-        "description": "Instance viewer dan explorer tool untuk debugging game.",
-        "url": "https://raw.githubusercontent.com/infypred/dex/main/dex.lua"
+        "name": "Dex Plus Plus",
+        "path": "/Plugin/DexPlusPlus.lua",
+        "description": "Explorer & Instance inspection tool versi lanjutan.",
+        "url": "https://github.com/AZYsGithub/DexPlusPlus/releases/latest/download/out.lua"
       }
     ],
-    "Plugin": [
+    "PLAYERS": [
       {
-        "name": "Simple Spy",
-        "path": "/Plugin/Spy.lua",
-        "description": "Remote event & function logger untuk analisis network.",
-        "url": "https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/CustomModules/6872274481.lua"
-      }
-    ],
-    "Players": [
-      {
-        "name": "Fly & Noclip Script",
-        "path": "/Players/Movement.lua",
-        "description": "Memberikan kemampuan terbang dan menembus dinding pada karakter.",
-        "url": "https://raw.githubusercontent.com/narakuhub/vetrou/refs/heads/main/scripts/fly.lua"
+        "name": "Zero Universal",
+        "path": "/Players/ZeroUniversal.lua",
+        "description": "Universal player script suite.",
+        "url": "https://raw.githubusercontent.com/kkkkkk-dev/ZeroExploits/main/ZeroUniversal.lua"
       }
     ]
   }
