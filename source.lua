@@ -116,7 +116,7 @@ LMG2L["UIPadding_d"]["PaddingBottom"] = UDim.new(0, 4);
 
 -- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.UIListLayout
 LMG2L["UIListLayout_e"] = Instance.new("UIListLayout", LMG2L["ScrollingFrame_c"]);
-LMG2L["UIListLayout_e"]["Padding"] = UDim.new(0, 4);
+LMG2L["UIListLayout_e"]["Padding"] = UDim.new(0, 5);
 
 
 -- Players.KenDmugiwara01.PlayerGui.ScreenGui.NarakuUI.Panel.ScrollingFrame.Card
