@@ -936,4 +936,340 @@ end
 
 Init()
 
+-- ====================================================================
+-- NARAKU SOURCE — LOGIC UTAMA
+-- (SCROLLING TAB • SEARCH • CARD SYSTEM • SCRIPT.JSON)
+-- ====================================================================
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- CORE
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+-- Services
+local HttpService = game:GetService("HttpService")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+
+-- Reference Objects (Hierarchy LMG2L Asli)
+local SearchBox = LMG2L["SearchBox_4"]
+local UIStroke_Search = LMG2L["UIStroke_7"]
+local ScrollingTab = LMG2L["ScrollingTab_26"]
+local ScrollingFrame = LMG2L["ScrollingFrame_c"]
+
+-- Template Card
+local CardTemplate = LMG2L["Card_f"]
+CardTemplate.Visible = false -- Sembunyikan template asli
+
+-- Reference Buttons & Frames Tab
+local TabButtons = {
+	{ Frame = LMG2L["SemuaFrame_39"], Button = LMG2L["SemuaButton_3a"], Category = "Semua" },
+	{ Frame = LMG2L["ChaosFrame_28"], Button = LMG2L["ChaosButton_2a"], Category = "Chaos" },
+	{ Frame = LMG2L["UtulityFrame_2c"], Button = LMG2L["UtulityButton_2d"], Category = "Utility" },
+	{ Frame = LMG2L["PluginFrame_30"], Button = LMG2L["PluginButton_32"], Category = "Plugin" },
+	{ Frame = LMG2L["PlayerFrame_35"], Button = LMG2L["PlayerButton_36"], Category = "Players" },
+}
+
+-- Database Variables
+local RawScriptDatabase = {}
+local InstantiatedCards = {}
+local CurrentCategory = "Semua"
+local PLACEHOLDER_TEXT = "Search Script.."
+
+-- Default Styles
+local COLOR_TAB_ACTIVE_BG = Color3.fromRGB(255, 255, 255)
+local COLOR_TAB_ACTIVE_TEXT = Color3.fromRGB(0, 0, 0)
+local COLOR_TAB_DEFAULT_BG = Color3.fromRGB(33, 33, 33)
+local COLOR_TAB_DEFAULT_TEXT = Color3.fromRGB(255, 255, 255)
+
+local COLOR_SEARCH_PLACEHOLDER = Color3.fromRGB(120, 120, 120)
+local COLOR_SEARCH_TYPING = Color3.fromRGB(255, 255, 255)
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- SCRIPT DATABASE & LOADER
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+local function LoadScriptDatabase(jsonData)
+	RawScriptDatabase = {}
+	
+	local success, decoded = pcall(function()
+		return HttpService:JSONDecode(jsonData)
+	end)
+
+	if success and decoded and decoded.Category then
+		for catName, scriptList in pairs(decoded.Category) do
+			for _, scriptData in ipairs(scriptList) do
+				table.insert(RawScriptDatabase, {
+					name = scriptData.name or "UNKNOWN",
+					path = scriptData.path or "/UI/Source.lua",
+					description = scriptData.description or "No description available.",
+					url = scriptData.url or "",
+					category = scriptData.category or catName
+				})
+			end
+		end
+	end
+end
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- CARD SYSTEM
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+local function BindCardInteractions(cardInstance, data)
+	local DropdownBtn = cardInstance:FindFirstChild("DropdownButton")
+	local IconDropdown = DropdownBtn and DropdownBtn:FindFirstChild("IconDropdown")
+	
+	local Path = cardInstance:FindFirstChild("Path")
+	local JudulDesc = cardInstance:FindFirstChild("JudulDesc")
+	local Description = cardInstance:FindFirstChild("Description")
+	local Garis = cardInstance:FindFirstChild("Garis")
+	local Output = cardInstance:FindFirstChild("Output")
+	local ExecBtn = cardInstance:FindFirstChild("ExecuteButton")
+	local IconExec = ExecBtn and ExecBtn:FindFirstChild("IconExecute")
+
+	local isExpanded = false
+	local originalExecImage = IconExec and IconExec.Image or "rbxassetid://6026663699"
+	local defaultOutputText = "[REQUEST] GET " .. (data.url or "")
+
+	-- Set Initial Binding Data
+	if cardInstance:FindFirstChild("Name") then cardInstance.Name.Text = data.name end
+	if Path then Path.Text = data.path end
+	if Description then Description.Text = data.description end
+	if Output then Output.Text = defaultOutputText end
+
+	-- Initial Expanded State Setup (Collapsed by default)
+	local function SetExpandVisibility(visibleState)
+		if Path then Path.Visible = visibleState end
+		if JudulDesc then JudulDesc.Visible = visibleState end
+		if Description then Description.Visible = visibleState end
+		if Garis then Garis.Visible = visibleState end
+		if Output then Output.Visible = visibleState end
+		if ExecBtn then ExecBtn.Visible = visibleState end
+	end
+	
+	SetExpandVisibility(false)
+
+	-- 4. DROPDOWN TOGGLE
+	if DropdownBtn then
+		DropdownBtn.MouseButton1Click:Connect(function()
+			isExpanded = not isExpanded
+			
+			local targetSize = isExpanded and UDim2.new(0, 261, 0, 160) or UDim2.new(0, 261, 0, 40)
+			local targetRotation = isExpanded and 180 or 0
+			
+			TweenService:Create(cardInstance, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = targetSize}):Play()
+			if IconDropdown then
+				TweenService:Create(IconDropdown, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Rotation = targetRotation}):Play()
+			end
+
+			if isExpanded then
+				SetExpandVisibility(true)
+			else
+				task.delay(0.15, function()
+					if not isExpanded then
+						SetExpandVisibility(false)
+					end
+				end)
+			end
+		end)
+	end
+
+	-- 5. EXECUTE & 6. OUTPUT SYSTEM
+	if ExecBtn then
+		ExecBtn.MouseButton1Click:Connect(function()
+			-- Loading State
+			if IconExec then
+				IconExec.Image = "rbxassetid://10959947716"
+			end
+			
+			if Output then
+				Output.Text = "[ SERVER ] GET " .. (data.url or "")
+			end
+
+			local spinConnection
+			spinConnection = RunService.RenderStepped:Connect(function(dt)
+				if IconExec then
+					IconExec.Rotation = (IconExec.Rotation + (360 * dt)) % 360
+				end
+			end)
+
+			-- Run Async Script
+			task.spawn(function()
+				local execSuccess, execErr = pcall(function()
+					if data.url and data.url ~= "" then
+						loadstring(game:HttpGet(data.url))()
+					end
+				end)
+
+				if spinConnection then spinConnection:Disconnect() end
+
+				if IconExec then
+					IconExec.Image = originalExecImage
+					IconExec.Rotation = 0
+				end
+
+				if not execSuccess and Output then
+					Output.Text = "[ ERROR ] Execution Failed"
+					task.delay(2, function()
+						if Output then Output.Text = defaultOutputText end
+					end)
+				else
+					task.delay(1.5, function()
+						if Output then Output.Text = defaultOutputText end
+					end)
+				end
+			end)
+		end)
+	end
+end
+
+local function PopulateCards()
+	-- Clean existing cloned cards
+	for _, card in ipairs(InstantiatedCards) do
+		card:Destroy()
+	end
+	InstantiatedCards = {}
+
+	local searchText = SearchBox.Text:lower()
+	if searchText == PLACEHOLDER_TEXT:lower() then
+		searchText = ""
+	end
+
+	for _, data in ipairs(RawScriptDatabase) do
+		-- Category Filter Check
+		local matchesCategory = (CurrentCategory == "Semua") or (data.category:lower() == CurrentCategory:lower())
+		
+		-- Search Text Filter Check
+		local matchesSearch = (searchText == "") or (data.name:lower():find(searchText, 1, true) ~= nil)
+
+		if matchesCategory and matchesSearch then
+			local ClonedCard = CardTemplate:Clone()
+			ClonedCard.Visible = true
+			ClonedCard.Parent = ScrollingFrame
+			
+			BindCardInteractions(ClonedCard, data)
+			table.insert(InstantiatedCards, ClonedCard)
+		end
+	end
+end
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- TAB SYSTEM
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+local function SetActiveTab(selectedCategory)
+	CurrentCategory = selectedCategory
+
+	for _, tab in ipairs(TabButtons) do
+		if tab.Category:lower() == selectedCategory:lower() then
+			tab.Button.BackgroundColor3 = COLOR_TAB_ACTIVE_BG
+			tab.Button.TextColor3 = COLOR_TAB_ACTIVE_TEXT
+		else
+			tab.Button.BackgroundColor3 = COLOR_TAB_DEFAULT_BG
+			tab.Button.TextColor3 = COLOR_TAB_DEFAULT_TEXT
+		end
+	end
+
+	PopulateCards()
+end
+
+local function InitTabSystem()
+	for _, tab in ipairs(TabButtons) do
+		tab.Button.MouseButton1Click:Connect(function()
+			SetActiveTab(tab.Category)
+		end)
+	end
+end
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- SEARCH SYSTEM
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+local function InitSearchSystem()
+	SearchBox.Text = PLACEHOLDER_TEXT
+	SearchBox.TextColor3 = COLOR_SEARCH_PLACEHOLDER
+
+	SearchBox.Focused:Connect(function()
+		TweenService:Create(UIStroke_Search, TweenInfo.new(0.2), {Transparency = 0}):Play()
+		if SearchBox.Text == PLACEHOLDER_TEXT then
+			SearchBox.Text = ""
+			SearchBox.TextColor3 = COLOR_SEARCH_TYPING
+		end
+	end)
+
+	SearchBox.FocusLost:Connect(function()
+		TweenService:Create(UIStroke_Search, TweenInfo.new(0.2), {Transparency = 0.5}):Play()
+		if SearchBox.Text:match("^%s*$") then
+			SearchBox.Text = PLACEHOLDER_TEXT
+			SearchBox.TextColor3 = COLOR_SEARCH_PLACEHOLDER
+		end
+	end)
+
+	SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
+		if SearchBox:IsFocused() then
+			PopulateCards()
+		end
+	end)
+end
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- INITIALIZATION
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+local function InitMainLogic(jsonString)
+	InitTabSystem()
+	InitSearchSystem()
+	
+	if jsonString then
+		LoadScriptDatabase(jsonString)
+	end
+	
+	SetActiveTab("Semua")
+end
+
+-- Contoh Eksekusi Langsung (Ganti 'embeddedJson' dengan String JSON Asli Anda)
+local embeddedJson = [[
+{
+  "Category": {
+    "Chaos": [
+      {
+        "name": "CHAOS CONTROL V1",
+        "path": "/Source/ChaosControl.lua",
+        "description": "Script chaos universal untuk eksperimen server dan manipulasi fisika dasar.",
+        "url": "https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source",
+        "category": "Chaos"
+      }
+    ],
+    "Utility": [
+      {
+        "name": "INFINITE YIELD",
+        "path": "/Admin/InfiniteYield.lua",
+        "description": "Admin command paling populer dengan ratusan fitur utility server.",
+        "url": "https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source",
+        "category": "Utility"
+      }
+    ],
+    "Plugin": [
+      {
+        "name": "DEX EXPLORER",
+        "path": "/Tools/DexExplorer.lua",
+        "description": "Inspector hierarchy instance game Roblox untuk debugging & reverse engineering.",
+        "url": "https://raw.githubusercontent.com/infypredator/infypredator/main/dex.lua",
+        "category": "Plugin"
+      }
+    ],
+    "Players": [
+      {
+        "name": "FLY & SPEED HUB",
+        "path": "/Player/Movement.lua",
+        "description": "Kumpulan fitur dasar movement seperti Fly, Speed, Noclip, dan JumpPower.",
+        "url": "https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source",
+        "category": "Players"
+      }
+    ]
+  }
+}
+]]
+
+InitMainLogic(embeddedJson)
+
 return LMG2L["ScreenGui_1"], require;
