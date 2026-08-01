@@ -32,8 +32,14 @@
       {
         "Name_20": "Cobalt Plugin",
         "Path_10": "/Plugin/Cobalt.luau",
-        "Description_11": "Cobalt tool plugin untuk debugging dan development tingkat lanjut bagi pembuat konten dan pengembang environment.",
+        "Description_11": "Cobalt tool RemoteEvent untuk debugging dan development tingkat lanjut bagi pembuat konten dan pengembang environment.",
         "url": "https://gitlab.com/upio/cobalt/-/releases/permalink/latest/downloads/Cobalt.luau"
+      },
+      {
+        "Name_20": "M7 Command Fe",
+        "Path_10": "/mois7.xyz/loader",
+        "Description_11": "Command fe",
+        "url": "https://mois7.xyz/loader"
       },
       {
         "Name_20": "Dex Plus Plus",
