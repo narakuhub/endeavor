@@ -111,9 +111,9 @@ local function ExecuteNarakuBypass()
 	end
 
 	if adonisFound then
-		print("[NARAKU BYPASS]: Adonis Anti-Cheat Bypassed Successfully!")
+		
 	else
-		print("[NARAKU BYPASS]: Anti-Cheat bypassed / No active threads detected.")
+		
 	end
 
 	return true
