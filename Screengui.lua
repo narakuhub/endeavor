@@ -351,6 +351,91 @@ LMG2L["Title_28"]["Position"] = UDim2.new(0, 6, 0, 6);
 LMG2L["UICorner_29"] = Instance.new("UICorner", LMG2L["Panel_2"]);
 LMG2L["UICorner_29"]["CornerRadius"] = UDim.new(0, 12);
 
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- NARAKU SOURCE — MAIN PANEL SYSTEM LOGIC
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+local Panel = LMG2L["Panel_2"]
+local Gradient = LMG2L["UIGradient_4"]
+local ScrollingFrame = LMG2L["ScrollingFrame_5"]
+local MinimalBtn = LMG2L["MinimalButton_25"]
+
+-- 1. UIGRADIENT ROTATION SYSTEM
+local ROTATION_SPEED = 90
+RunService.RenderStepped:Connect(function(deltaTime)
+	Gradient.Rotation = (Gradient.Rotation + (ROTATION_SPEED * deltaTime)) % 360
+end)
+
+-- 2. MINIMAL BUTTON SYSTEM
+local isMinimized = false
+local NORMAL_SIZE = UDim2.new(0, 206, 0, 160)
+local MINIMAL_SIZE = UDim2.new(0, 206, 0, 40)
+local TWEEN_INFO = TweenInfo.new(0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+
+MinimalBtn.MouseButton1Click:Connect(function()
+	isMinimized = not isMinimized
+	
+	if isMinimized then
+		MinimalBtn.Text = "+"
+		ScrollingFrame.Visible = false
+		TweenService:Create(Panel, TWEEN_INFO, {Size = MINIMAL_SIZE}):Play()
+	else
+		MinimalBtn.Text = "-"
+		local tween = TweenService:Create(Panel, TWEEN_INFO, {Size = NORMAL_SIZE})
+		tween:Play()
+		tween.Completed:Connect(function()
+			if not isMinimized then
+				ScrollingFrame.Visible = true
+			end
+		end)
+	end
+end)
+
+-- 3. SMOOTH DRAG SYSTEM (PC & MOBILE)
+local dragging = false
+local dragInput
+local dragStart
+local startPos
+
+local function update(input)
+	local delta = input.Position - dragStart
+	local targetPos = UDim2.new(
+		startPos.X.Scale,
+		startPos.X.Offset + delta.X,
+		startPos.Y.Scale,
+		startPos.Y.Offset + delta.Y
+	)
+	TweenService:Create(Panel, TweenInfo.new(0.08, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Position = targetPos}):Play()
+end
+
+Panel.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		dragging = true
+		dragStart = input.Position
+		startPos = Panel.Position
+
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+			end
+		end)
+	end
+end)
+
+Panel.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+		dragInput = input
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+	if input == dragInput and dragging then
+		update(input)
+	end
+end)
 
 return LMG2L["ScreenGui_1"], require;
