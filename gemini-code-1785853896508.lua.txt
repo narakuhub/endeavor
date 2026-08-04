@@ -386,3 +386,201 @@ ToggleBtn.Size = UDim2.fromScale(1, 1)
 ToggleBtn.BackgroundTransparency = 1
 ToggleBtn.Text = ""
 ToggleBtn.Parent = ToggleFrame
+
+--!strict
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- NARAKU SOURCE — MAIN PANEL LOGIC ENGINE
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
+local VirtualUser = game:GetService("VirtualUser")
+
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:FindFirstChildOfClass("PlayerGui") or game:GetService("CoreGui")
+local ScreenGui = PlayerGui:WaitForChild("NarakuSourceGui")
+local MainFrame = ScreenGui:WaitForChild("MainFrame")
+local ContentContainer = MainFrame:WaitForChild("ContentContainer")
+
+-- State Variables
+local selectedNpc = ""
+local selectedTrap = ""
+local savedCFrame: CFrame? = nil
+local antiAfkActive = false
+local isMinimized = false
+
+local npcList = {
+	"Aidan", "Arthur", "Billy", "Darmo", "Eldon", "Gideon",
+	"Grizzled Glen", "Hoffer", "Ivorg", "Luke", "Lumi", "Orion",
+	"Salty Silas", "Sam", "Sarah", "Silas", "Trapper"
+}
+
+local trapList = {
+	"Bamboo Trap", "Flame Trap", "Grass Trap", "Ice Trap",
+	"Iron Cage", "Lava Trap", "Metal Trap", "Quantum Net",
+	"Starter Box Trap", "Steel Bear Trap", "VIP Enclosure", "Wood Trap"
+}
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- POPULATE DROPDOWNS
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+local NpcCard = ContentContainer:WaitForChild("NpcCard")
+local NpcDropdownBtn = NpcCard:WaitForChild("NpcDropdownBtn") :: TextButton
+local NpcScroll = NpcCard:WaitForChild("NpcScroll") :: ScrollingFrame
+
+local TrapCard = ContentContainer:WaitForChild("TrapCard")
+local TrapDropdownBtn = TrapCard:WaitForChild("TrapDropdownBtn") :: TextButton
+local TrapScroll = TrapCard:WaitForChild("TrapScroll") :: ScrollingFrame
+
+local function PopulateList(scrollFrame: ScrollingFrame, items: {string}, onSelect: (string) -> ())
+	for _, name in ipairs(items) do
+		local btn = Instance.new("TextButton")
+		btn.Size = UDim2.new(1, 0, 0, 20)
+		btn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+		btn.BackgroundTransparency = 0.2
+		btn.Font = Enum.Font.Gotham
+		btn.Text = " " .. name
+		btn.TextColor3 = Color3.fromRGB(180, 180, 180)
+		btn.TextSize = 9
+		btn.TextXAlignment = Enum.TextXAlignment.Left
+		btn.Parent = scrollFrame
+
+		btn.MouseButton1Click:Connect(function()
+			onSelect(name)
+			scrollFrame.Visible = false
+		end)
+	end
+end
+
+PopulateList(NpcScroll, npcList, function(name)
+	selectedNpc = name
+	NpcDropdownBtn.Text = "  " .. name .. "  ▼"
+end)
+
+PopulateList(TrapScroll, trapList, function(name)
+	selectedTrap = name
+	TrapDropdownBtn.Text = "  " .. name .. "  ▼"
+end)
+
+NpcDropdownBtn.MouseButton1Click:Connect(function()
+	NpcScroll.Visible = not NpcScroll.Visible
+	TrapScroll.Visible = false
+end)
+
+TrapDropdownBtn.MouseButton1Click:Connect(function()
+	TrapScroll.Visible = not TrapScroll.Visible
+	NpcScroll.Visible = false
+end)
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- TELEPORT SYSTEM CALLBACKS
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+local NpcTpBtn = NpcCard:WaitForChild("NpcTpBtn") :: TextButton
+local TrapTpBtn = TrapCard:WaitForChild("TrapTpBtn") :: TextButton
+
+local function TeleportToTarget(targetName: string)
+	if targetName == "" then return end
+	local character = LocalPlayer.Character
+	if not character or not character:FindFirstChild("HumanoidRootPart") then return end
+
+	-- Look for NPC/Trap in Workspace
+	local targetObj = workspace:FindFirstChild(targetName, true)
+	if targetObj then
+		local targetCFrame = targetObj:IsA("Model") and targetObj:GetPivot() or targetObj.CFrame
+		character:PivotTo(targetCFrame + Vector3.new(0, 3, 0))
+	end
+end
+
+NpcTpBtn.MouseButton1Click:Connect(function()
+	TeleportToTarget(selectedNpc)
+end)
+
+TrapTpBtn.MouseButton1Click:Connect(function()
+	TeleportToTarget(selectedTrap)
+end)
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- POSITION SYSTEM CALLBACKS
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+local PosCard = ContentContainer:WaitForChild("PosCard")
+local PosContainer = PosCard:WaitForChild("PosContainer")
+local SavePosBtn = PosContainer:WaitForChild("SavePosBtn") :: TextButton
+local TpSavedBtn = PosContainer:WaitForChild("TpSavedBtn") :: TextButton
+local ClearPosBtn = PosContainer:WaitForChild("ClearPosBtn") :: TextButton
+
+SavePosBtn.MouseButton1Click:Connect(function()
+	local char = LocalPlayer.Character
+	if char and char:FindFirstChild("HumanoidRootPart") then
+		savedCFrame = char.HumanoidRootPart.CFrame
+		SavePosBtn.Text = "💾 SAVED!"
+		task.wait(1)
+		SavePosBtn.Text = "💾 SAVE"
+	end
+end)
+
+TpSavedBtn.MouseButton1Click:Connect(function()
+	local char = LocalPlayer.Character
+	if char and char:FindFirstChild("HumanoidRootPart") and savedCFrame then
+		char:PivotTo(savedCFrame)
+	end
+end)
+
+ClearPosBtn.MouseButton1Click:Connect(function()
+	savedCFrame = nil
+	ClearPosBtn.Text = "🗑️ CLEARED"
+	task.wait(1)
+	ClearPosBtn.Text = "🗑️ CLEAR"
+end)
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- ANTI AFK SYSTEM
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+local AfkCard = ContentContainer:WaitForChild("AfkCard")
+local ToggleFrame = AfkCard:WaitForChild("ToggleFrame") :: Frame
+local ToggleDot = ToggleFrame:WaitForChild("ToggleDot") :: Frame
+local ToggleBtn = ToggleFrame:WaitForChild("ToggleBtn") :: TextButton
+
+local function UpdateAntiAfkState()
+	local targetPos = antiAfkActive and UDim2.new(1, -16, 0.5, -7) or UDim2.new(0, 2, 0.5, -7)
+	local targetColor = antiAfkActive and Color3.fromRGB(0, 200, 255) or Color3.fromRGB(40, 40, 40)
+	
+	TweenService:Create(ToggleDot, TweenInfo.new(0.2), {Position = targetPos}):Play()
+	TweenService:Create(ToggleFrame, TweenInfo.new(0.2), {BackgroundColor3 = targetColor}):Play()
+end
+
+ToggleBtn.MouseButton1Click:Connect(function()
+	antiAfkActive = not antiAfkActive
+	UpdateAntiAfkState()
+end)
+
+LocalPlayer.Idled:Connect(function()
+	if antiAfkActive then
+		VirtualUser:CaptureController()
+		VirtualUser:ClickButton2(Vector2.new())
+	end
+end)
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- WINDOW CONTROL (MINIMIZE & CLOSE)
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+local Header = MainFrame:WaitForChild("Header")
+local ControlContainer = Header:WaitForChild("ControlContainer")
+local MinimizeBtn = ControlContainer:WaitForChild("MinimizeBtn") :: TextButton
+local CloseBtn = ControlContainer:WaitForChild("CloseBtn") :: TextButton
+
+MinimizeBtn.MouseButton1Click:Connect(function()
+	isMinimized = not isMinimized
+	ContentContainer.Visible = not isMinimized
+	
+	local targetSize = isMinimized and UDim2.fromOffset(260, 30) or UDim2.fromOffset(260, 300)
+	TweenService:Create(MainFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = targetSize}):Play()
+end)
+
+CloseBtn.MouseButton1Click:Connect(function()
+	ScreenGui:Destroy()
+end)
