@@ -438,4 +438,200 @@ UserInputService.InputChanged:Connect(function(input)
 	end
 end)
 
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- NARAKU SOURCE — FEATURE LOGIC SYSTEM (HARD-CODED INTEGRATION)
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local VirtualUser = game:GetService("VirtualUser")
+local RunService = game:GetService("RunService")
+local HttpService = game:GetService("HttpService")
+
+local LocalPlayer = Players.LocalPlayer
+
+-- UI REFERENCES (Mendapatkan instance dari hardcode ScreenGui)
+local Panel = LMG2L["Panel_2"]
+local ScrollingFrame = LMG2L["ScrollingFrame_5"]
+
+-- Card Anti AFK Elements
+local CardAntiAfk = ScrollingFrame:WaitForChild("CardAntiAfk")
+local ToggleFrame = CardAntiAfk:WaitForChild("ToggleFrame")
+local ToggleButton = ToggleFrame:WaitForChild("ToggleButton")
+local TimeLabel = CardAntiAfk:WaitForChild("TimeLabel")
+
+-- Card Teleport Elements
+local CardTeleport = ScrollingFrame:WaitForChild("CardTeleport")
+local SavePositionButton = CardTeleport:WaitForChild("SavePositionButton")
+local ResetPositionButton = CardTeleport:WaitForChild("ResetPositionButton")
+local TeleportButton = CardTeleport:WaitForChild("TeleportButton")
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- [1] UTILITY & FILE SYSTEM HELPERS
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+local FILE_NAME = "Naraku_SavedPos.json"
+local savedCFrame: CFrame? = nil
+
+local function SavePositionToFile(cf: CFrame)
+	savedCFrame = cf
+	local data = {cf:GetComponents()}
+	if writefile then
+		pcall(function()
+			writefile(FILE_NAME, HttpService:JSONEncode(data))
+		end)
+	end
+end
+
+local function LoadPositionFromFile(): CFrame?
+	if isfile and readfile and isfile(FILE_NAME) then
+		local success, result = pcall(function()
+			local raw = readfile(FILE_NAME)
+			local data = HttpService:JSONDecode(raw)
+			return CFrame.new(unpack(data))
+		end)
+		if success and result then
+			savedCFrame = result
+			return result
+		end
+	end
+	return savedCFrame
+end
+
+local function ClearPositionFile()
+	savedCFrame = nil
+	if isfile and delfile and isfile(FILE_NAME) then
+		pcall(function()
+			delfile(FILE_NAME)
+		end)
+	end
+end
+
+-- Initialize saved position on load
+LoadPositionFromFile()
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- [2] ANTI AFK SYSTEM (WITH TIMER PAUSE/RESUME & PROTECTION)
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+local isAfkEnabled = false
+local totalAfkSeconds = 0
+local timerAccumulator = 0
+
+-- Color States
+local COLOR_TOGGLE_OFF = Color3.fromRGB(0, 0, 0)
+local COLOR_TOGGLE_ON = Color3.fromRGB(38, 148, 24)
+local DOT_OFF_POS = UDim2.new(0, 2, 0, 2)
+local DOT_ON_POS = UDim2.new(0, 26, 0, 2)
+local TWEEN_INFO = TweenInfo.new(0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+
+-- Format Timer Generator (00h 00m 00s)
+local function FormatTime(seconds: number): string
+	local hrs = math.floor(seconds / 3600)
+	local mins = math.floor((seconds % 3600) / 60)
+	local secs = math.floor(seconds % 60)
+	return string.format("%02dh %02dm %02ds", hrs, mins, secs)
+end
+
+-- Update Label Display
+TimeLabel.Text = FormatTime(totalAfkSeconds)
+
+-- Timer Connection (Continuous Accumulation without reset on Respawn/Toggle)
+RunService.Heartbeat:Connect(function(deltaTime)
+	if isAfkEnabled then
+		timerAccumulator = timerAccumulator + deltaTime
+		if timerAccumulator >= 1 then
+			totalAfkSeconds = totalAfkSeconds + math.floor(timerAccumulator)
+			timerAccumulator = timerAccumulator % 1
+			TimeLabel.Text = FormatTime(totalAfkSeconds)
+		end
+	end
+end)
+
+-- Toggle State Animation & System Activation
+local function SetAfkState(state: boolean)
+	isAfkEnabled = state
+	local targetPos = isAfkEnabled and DOT_ON_POS or DOT_OFF_POS
+	local targetColor = isAfkEnabled and COLOR_TOGGLE_ON or COLOR_TOGGLE_OFF
+
+	TweenService:Create(ToggleButton, TWEEN_INFO, {Position = targetPos}):Play()
+	TweenService:Create(ToggleFrame, TWEEN_INFO, {BackgroundColor3 = targetColor}):Play()
+end
+
+ToggleButton.MouseButton1Click:Connect(function()
+	SetAfkState(not isAfkEnabled)
+end)
+
+-- Anti-Kick Protection via Idled & VirtualUser Signal
+LocalPlayer.Idled:Connect(function()
+	if isAfkEnabled then
+		VirtualUser:CaptureController()
+		VirtualUser:ClickButton2(Vector2.new())
+	end
+end)
+
+-- Protection tambahan: Periodic Input Simulation saat Active
+task.spawn(function()
+	while true do
+		task.wait(60)
+		if isAfkEnabled then
+			pcall(function()
+				VirtualUser:Button2Down(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+				task.wait(0.1)
+				VirtualUser:Button2Up(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+			end)
+		end
+	end
+end)
+
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-- [3] TELEPORT POSITION SYSTEM
+-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+-- Validation Helper
+local function GetCharacterParts()
+	local char = LocalPlayer.Character
+	if not char then return nil, nil end
+	
+	local hum = char:FindFirstChildOfClass("Humanoid")
+	local hrp = char:FindFirstChild("HumanoidRootPart") :: BasePart
+	
+	if hum and hrp and hum.Health > 0 then
+		return char, hrp
+	end
+	return nil, nil
+end
+
+-- Save Position Action
+SavePositionButton.MouseButton1Click:Connect(function()
+	local _, hrp = GetCharacterParts()
+	if hrp then
+		SavePositionToFile(hrp.CFrame)
+		local origText = SavePositionButton.Text
+		SavePositionButton.Text = "SAVED!"
+		task.wait(0.8)
+		SavePositionButton.Text = origText
+	end
+end)
+
+-- Reset Position Action
+ResetPositionButton.MouseButton1Click:Connect(function()
+	ClearPositionFile()
+	local origText = ResetPositionButton.Text
+	ResetPositionButton.Text = "CLEARED!"
+	task.wait(0.8)
+	ResetPositionButton.Text = origText
+end)
+
+-- Teleport Position Action
+TeleportButton.MouseButton1Click:Connect(function()
+	local targetCF = LoadPositionFromFile()
+	if not targetCF then return end
+	
+	local char, hrp = GetCharacterParts()
+	if char and hrp then
+		hrp.CFrame = targetCF
+	end
+end)
+
 return LMG2L["ScreenGui_1"], require;
