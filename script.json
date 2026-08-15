@@ -46,7 +46,13 @@
         "Path_10": "/Plugin/DexPlusPlus.lua",
         "Description_11": "Explorer & Instance inspection tool versi lanjutan untuk memeriksa hierarki game, properti elemen, dan struktur data lokal secara mendalam.",
         "url": "https://github.com/AZYsGithub/DexPlusPlus/releases/latest/download/out.lua"
-      }
+      },
+     {
+        "Name_20": "Flare Icons",
+        "Path_10": "/Plugin/Flare_Icons.lua",
+        "Description_11": "Explorer & Instance inspection tool versi lanjutan untuk memeriksa hierarki game, properti elemen, dan struktur data lokal secara mendalam.",
+        "url": "https://raw.githubusercontent.com/botbotbot201303-del/Flare_Icons/refs/heads/main/FlareIcons.lua%20(1).txt"
+     }
     ],
     "PLAYERS": [
       {
