@@ -1,0 +1,458 @@
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+local WindUI = Instance.new("Folder")
+WindUI.Name = "WindUI"
+WindUI.Parent = ScreenGui
+
+local Panel = Instance.new("Frame")
+Panel.Name = "Panel"
+Panel.Parent = WindUI
+Panel.BorderSizePixel = 0
+Panel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Panel.AnchorPoint = Vector2.new(0.5, 0.5)
+Panel.Size = UDim2.new(0, 270, 0, 300)
+Panel.Position = UDim2.new(0.5, 0, 0.5, 0)
+
+local ScrollingFrame = Instance.new("ScrollingFrame")
+ScrollingFrame.Parent = Panel
+ScrollingFrame.ZIndex = 4
+ScrollingFrame.BorderSizePixel = 0
+ScrollingFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+ScrollingFrame.Size = UDim2.new(0, 270, 0, 210)
+ScrollingFrame.Position = UDim2.new(0, 0, 0, 88)
+ScrollingFrame.ScrollBarThickness = 0
+ScrollingFrame.BackgroundTransparency = 1
+
+local UIPadding = Instance.new("UIPadding")
+UIPadding.Parent = ScrollingFrame
+UIPadding.PaddingTop = UDim.new(0, 4)
+UIPadding.PaddingRight = UDim.new(0, 4)
+UIPadding.PaddingLeft = UDim.new(0, 5)
+UIPadding.PaddingBottom = UDim.new(0, 4)
+
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.Parent = ScrollingFrame
+UIListLayout.Padding = UDim.new(0, 4)
+
+local Card = Instance.new("Frame")
+Card.Name = "Card"
+Card.Parent = ScrollingFrame
+Card.BorderSizePixel = 0
+Card.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+Card.Size = UDim2.new(0, 261, 0, 160)
+Card.Position = UDim2.new(0, 4, 0, 4)
+Card.BackgroundTransparency = 0.5
+
+local Path = Instance.new("TextLabel")
+Path.Name = "Path"
+Path.Parent = Card
+Path.BorderSizePixel = 0
+Path.TextSize = 10
+Path.TextXAlignment = Enum.TextXAlignment.Left
+Path.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Path.FontFace = Font.new("rbxasset://fonts/families/Inconsolata.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+Path.TextColor3 = Color3.fromRGB(159, 159, 159)
+Path.BackgroundTransparency = 1
+Path.Size = UDim2.new(0, 194, 0, 14)
+Path.Text = "/UI/Source.lua"
+Path.Position = UDim2.new(0, 4, 0, 22)
+
+local Description = Instance.new("TextLabel")
+Description.Name = "Description"
+Description.Parent = Card
+Description.TextWrapped = true
+Description.BorderSizePixel = 0
+Description.TextSize = 9
+Description.TextXAlignment = Enum.TextXAlignment.Left
+Description.TextYAlignment = Enum.TextYAlignment.Top
+Description.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Description.FontFace = Font.new("rbxasset://fonts/families/Arial.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+Description.TextColor3 = Color3.fromRGB(208, 208, 208)
+Description.BackgroundTransparency = 1
+Description.Size = UDim2.new(0, 252, 0, 35)
+Description.Text = "Description"
+Description.Position = UDim2.new(0, 6, 0, 56)
+
+local Button = Instance.new("TextButton")
+Button.Name = "Button"
+Button.Parent = Card
+Button.BorderSizePixel = 0
+Button.TextSize = 12
+Button.BackgroundColor3 = Color3.fromRGB(224, 231, 238)
+Button.FontFace = Font.new("rbxasset://fonts/families/Arial.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+Button.Size = UDim2.new(0, 250, 0, 26)
+Button.Text = "EXECUTE"
+Button.Position = UDim2.new(0, 6, 0, 128)
+
+local UICorner = Instance.new("UICorner")
+UICorner.Parent = Button
+UICorner.CornerRadius = UDim.new(0, 5)
+
+local IconExecute = Instance.new("ImageLabel")
+IconExecute.Name = "IconExecute"
+IconExecute.Parent = Button
+IconExecute.BorderSizePixel = 0
+IconExecute.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+IconExecute.ImageColor3 = Color3.fromRGB(0, 0, 0)
+IconExecute.Image = "rbxassetid://110313200539368"
+IconExecute.Size = UDim2.new(0, 18, 0, 18)
+IconExecute.BackgroundTransparency = 1
+IconExecute.Position = UDim2.new(0, 78, 0, 4)
+
+local UIStroke = Instance.new("UIStroke")
+UIStroke.Parent = Card
+UIStroke.Transparency = 0.5
+UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+UIStroke.Thickness = 0.5
+UIStroke.Color = Color3.fromRGB(86, 86, 86)
+
+local UICorner_2 = Instance.new("UICorner")
+UICorner_2.Parent = Card
+
+local Dropdown = Instance.new("TextButton")
+Dropdown.Name = "Dropdown"
+Dropdown.Parent = Card
+Dropdown.BorderSizePixel = 0
+Dropdown.TextSize = 12
+Dropdown.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Dropdown.FontFace = Font.new("rbxasset://fonts/families/Arial.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+Dropdown.BackgroundTransparency = 1
+Dropdown.Size = UDim2.new(0, 261, 0, 40)
+Dropdown.Text = ""
+
+local UICorner_3 = Instance.new("UICorner")
+UICorner_3.Parent = Dropdown
+UICorner_3.CornerRadius = UDim.new(0, 5)
+
+local IconDropdown = Instance.new("ImageLabel")
+IconDropdown.Name = "IconDropdown"
+IconDropdown.Parent = Dropdown
+IconDropdown.BorderSizePixel = 0
+IconDropdown.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+IconDropdown.Image = "rbxassetid://2406617031"
+IconDropdown.Size = UDim2.new(0, 15, 0, 14)
+IconDropdown.BackgroundTransparency = 1
+IconDropdown.Position = UDim2.new(0, 236, 0, 12)
+
+local Tag = Instance.new("TextLabel")
+Tag.Name = "Tag"
+Tag.Parent = Card
+Tag.BorderSizePixel = 0
+Tag.TextSize = 9
+Tag.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Tag.FontFace = Font.new("rbxasset://fonts/families/Arial.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+Tag.TextColor3 = Color3.fromRGB(246, 246, 246)
+Tag.Size = UDim2.new(0, 32, 0, 16)
+Tag.Text = "GET"
+Tag.Position = UDim2.new(0, 4, 0, 4)
+
+local UICorner_4 = Instance.new("UICorner")
+UICorner_4.Parent = Tag
+UICorner_4.CornerRadius = UDim.new(0, 5)
+
+local UIStroke_2 = Instance.new("UIStroke")
+UIStroke_2.Parent = Tag
+UIStroke_2.Transparency = 0.5
+UIStroke_2.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+UIStroke_2.Thickness = 0.5
+UIStroke_2.Color = Color3.fromRGB(86, 86, 86)
+
+local Output = Instance.new("TextLabel")
+Output.Name = "Output"
+Output.Parent = Card
+Output.BorderSizePixel = 0
+Output.TextSize = 9
+Output.TextXAlignment = Enum.TextXAlignment.Left
+Output.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Output.FontFace = Font.new("rbxasset://fonts/families/Inconsolata.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+Output.TextColor3 = Color3.fromRGB(218, 218, 218)
+Output.BackgroundTransparency = 1
+Output.Size = UDim2.new(0, 250, 0, 24)
+Output.Text = " [REQUEST] GET https://..."
+Output.Position = UDim2.new(0, 6, 0, 98)
+
+local UICorner_5 = Instance.new("UICorner")
+UICorner_5.Parent = Output
+UICorner_5.CornerRadius = UDim.new(0, 5)
+
+local UIStroke_3 = Instance.new("UIStroke")
+UIStroke_3.Parent = Output
+UIStroke_3.Transparency = 0.5
+UIStroke_3.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+UIStroke_3.Thickness = 0.5
+UIStroke_3.Color = Color3.fromRGB(86, 86, 86)
+
+local Name = Instance.new("TextLabel")
+Name.Name = "Name"
+Name.Parent = Card
+Name.BorderSizePixel = 0
+Name.TextSize = 10
+Name.TextXAlignment = Enum.TextXAlignment.Left
+Name.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Name.FontFace = Font.new("rbxasset://fonts/families/Arial.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+Name.TextColor3 = Color3.fromRGB(255, 255, 255)
+Name.BackgroundTransparency = 1
+Name.Size = UDim2.new(0, 194, 0, 16)
+Name.Text = "CARD TAMPLATE"
+Name.Position = UDim2.new(0, 42, 0, 4)
+
+local TitleDesc = Instance.new("TextLabel")
+TitleDesc.Name = "TitleDesc"
+TitleDesc.Parent = Card
+TitleDesc.BorderSizePixel = 0
+TitleDesc.TextSize = 9
+TitleDesc.TextXAlignment = Enum.TextXAlignment.Left
+TitleDesc.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+TitleDesc.FontFace = Font.new("rbxasset://fonts/families/Arial.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+TitleDesc.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleDesc.BackgroundTransparency = 1
+TitleDesc.Size = UDim2.new(0, 146, 0, 14)
+TitleDesc.Text = "NOTE"
+TitleDesc.Position = UDim2.new(0, 6, 0, 42)
+
+local Garis = Instance.new("Frame")
+Garis.Name = "Garis"
+Garis.Parent = Card
+Garis.BorderSizePixel = 0
+Garis.BackgroundColor3 = Color3.fromRGB(59, 59, 59)
+Garis.Size = UDim2.new(0, 261, 0, 1)
+Garis.Position = UDim2.new(0, 0, 0, 40)
+Garis.BackgroundTransparency = 0.5
+
+local SearchBox = Instance.new("TextBox")
+SearchBox.Name = "SearchBox"
+SearchBox.Parent = Panel
+SearchBox.ZIndex = 4
+SearchBox.BorderSizePixel = 0
+SearchBox.TextSize = 9
+SearchBox.TextColor3 = Color3.fromRGB(212, 212, 212)
+SearchBox.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+SearchBox.FontFace = Font.new("rbxasset://fonts/families/Arial.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+SearchBox.Size = UDim2.new(0, 261, 0, 24)
+SearchBox.Position = UDim2.new(0, 5, 0, 62)
+SearchBox.Text = "Search Script.."
+SearchBox.BackgroundTransparency = 0.5
+
+local UICorner_6 = Instance.new("UICorner")
+UICorner_6.Parent = SearchBox
+UICorner_6.CornerRadius = UDim.new(0, 5)
+
+local IconSearch = Instance.new("ImageLabel")
+IconSearch.Name = "IconSearch"
+IconSearch.Parent = SearchBox
+IconSearch.BorderSizePixel = 0
+IconSearch.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+IconSearch.Image = "rbxassetid://91918048389224"
+IconSearch.Size = UDim2.new(0, 16, 0, 16)
+IconSearch.BackgroundTransparency = 1
+IconSearch.Position = UDim2.new(0, 4, 0, 4)
+
+local UIStroke_4 = Instance.new("UIStroke")
+UIStroke_4.Parent = SearchBox
+UIStroke_4.Transparency = 0.5
+UIStroke_4.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+UIStroke_4.Thickness = 0.5
+UIStroke_4.Color = Color3.fromRGB(86, 86, 86)
+
+local Banner = Instance.new("ImageLabel")
+Banner.Name = "Banner"
+Banner.Parent = Panel
+Banner.BorderSizePixel = 0
+Banner.ScaleType = Enum.ScaleType.Crop
+Banner.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Banner.Image = "rbxassetid://99027217090571"
+Banner.Size = UDim2.new(0, 270, 0, 28)
+Banner.BackgroundTransparency = 1
+
+local UICorner_7 = Instance.new("UICorner")
+UICorner_7.Parent = Banner
+UICorner_7.CornerRadius = UDim.new(0, 12)
+
+local UIGradient = Instance.new("UIGradient")
+UIGradient.Parent = Banner
+UIGradient.Color = ColorSequence.new({
+	ColorSequenceKeypoint.new(0.000, Color3.fromRGB(0, 0, 0)),
+	ColorSequenceKeypoint.new(0.500, Color3.fromRGB(255, 255, 255)),
+	ColorSequenceKeypoint.new(1.000, Color3.fromRGB(0, 0, 0))
+})
+
+local UICorner_8 = Instance.new("UICorner")
+UICorner_8.Parent = Panel
+UICorner_8.CornerRadius = UDim.new(0, 12)
+
+local UIStroke_5 = Instance.new("UIStroke")
+UIStroke_5.Parent = Panel
+UIStroke_5.Thickness = 2
+UIStroke_5.Color = Color3.fromRGB(255, 255, 255)
+
+local UIGradient_2 = Instance.new("UIGradient")
+UIGradient_2.Parent = UIStroke_5
+UIGradient_2.Color = ColorSequence.new({
+	ColorSequenceKeypoint.new(0.000, Color3.fromRGB(197, 197, 197)),
+	ColorSequenceKeypoint.new(0.500, Color3.fromRGB(161, 161, 161)),
+	ColorSequenceKeypoint.new(1.000, Color3.fromRGB(0, 0, 0))
+})
+
+local ScrollingTab = Instance.new("ScrollingFrame")
+ScrollingTab.Name = "ScrollingTab"
+ScrollingTab.Parent = Panel
+ScrollingTab.ScrollingDirection = Enum.ScrollingDirection.X
+ScrollingTab.ZIndex = 4
+ScrollingTab.BorderSizePixel = 0
+ScrollingTab.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+ScrollingTab.AutomaticCanvasSize = Enum.AutomaticSize.X
+ScrollingTab.Size = UDim2.new(0, 261, 0, 30)
+ScrollingTab.Position = UDim2.new(0, 5, 0, 30)
+ScrollingTab.ScrollBarThickness = 0
+
+local UIPadding_2 = Instance.new("UIPadding")
+UIPadding_2.Parent = ScrollingTab
+UIPadding_2.PaddingTop = UDim.new(0, 3)
+
+local UIListLayout_2 = Instance.new("UIListLayout")
+UIListLayout_2.Parent = ScrollingTab
+UIListLayout_2.Padding = UDim.new(0, 4)
+UIListLayout_2.FillDirection = Enum.FillDirection.Horizontal
+
+local BgTab = Instance.new("Frame")
+BgTab.Name = "BgTab"
+BgTab.Parent = ScrollingTab
+BgTab.BorderSizePixel = 0
+BgTab.BackgroundColor3 = Color3.fromRGB(86, 86, 86)
+BgTab.Size = UDim2.new(0, 70, 0, 24)
+
+local Tab = Instance.new("TextButton")
+Tab.Name = "Tab"
+Tab.Parent = BgTab
+Tab.BorderSizePixel = 0
+Tab.TextSize = 9
+Tab.TextColor3 = Color3.fromRGB(255, 255, 255)
+Tab.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
+Tab.FontFace = Font.new("rbxasset://fonts/families/Arial.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+Tab.Size = UDim2.new(0, 70, 0, 22)
+Tab.Text = "TAB BUTTON"
+
+local UICorner_9 = Instance.new("UICorner")
+UICorner_9.Parent = Tab
+UICorner_9.CornerRadius = UDim.new(0, 5)
+
+local UICorner_10 = Instance.new("UICorner")
+UICorner_10.Parent = BgTab
+
+local Header = Instance.new("Frame")
+Header.Name = "Header"
+Header.Parent = Panel
+Header.ZIndex = 3
+Header.BorderSizePixel = 0
+Header.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Header.Size = UDim2.new(0, 270, 0, 28)
+Header.BackgroundTransparency = 0.85
+
+local Garis_2 = Instance.new("Frame")
+Garis_2.Name = "Garis"
+Garis_2.Parent = Header
+Garis_2.BorderSizePixel = 0
+Garis_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Garis_2.Size = UDim2.new(0, 270, 0, 1)
+Garis_2.Position = UDim2.new(0, 0, 0, 28)
+
+local UIGradient_3 = Instance.new("UIGradient")
+UIGradient_3.Parent = Garis_2
+UIGradient_3.Color = ColorSequence.new({
+	ColorSequenceKeypoint.new(0.000, Color3.fromRGB(0, 0, 0)),
+	ColorSequenceKeypoint.new(0.500, Color3.fromRGB(85, 85, 85)),
+	ColorSequenceKeypoint.new(1.000, Color3.fromRGB(0, 0, 0))
+})
+
+local UICorner_11 = Instance.new("UICorner")
+UICorner_11.Parent = Header
+UICorner_11.CornerRadius = UDim.new(0, 12)
+
+local Title = Instance.new("TextLabel")
+Title.Name = "Title"
+Title.Parent = Header
+Title.BorderSizePixel = 0
+Title.TextSize = 12
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Title.FontFace = Font.new("rbxasset://fonts/families/Arial.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.BackgroundTransparency = 1
+Title.Size = UDim2.new(0, 116, 0, 16)
+Title.Text = "NARS' ENDEAVOR UI"
+Title.Position = UDim2.new(0, 28, 0, 6)
+
+local Logo = Instance.new("ImageLabel")
+Logo.Name = "Logo"
+Logo.Parent = Header
+Logo.BorderSizePixel = 0
+Logo.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Logo.Image = "rbxassetid://100744567525223"
+Logo.Size = UDim2.new(0, 20, 0, 20)
+Logo.BackgroundTransparency = 1
+Logo.Position = UDim2.new(0, 5, 0, 4)
+
+local MinimalButton = Instance.new("TextButton")
+MinimalButton.Name = "MinimalButton"
+MinimalButton.Parent = Header
+MinimalButton.BorderSizePixel = 0
+MinimalButton.TextSize = 16
+MinimalButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinimalButton.BackgroundColor3 = Color3.fromRGB(38, 38, 38)
+MinimalButton.BackgroundTransparency = 0.5
+MinimalButton.Size = UDim2.new(0, 20, 0, 20)
+MinimalButton.Text = "-"
+MinimalButton.Position = UDim2.new(0, 220, 0, 4)
+
+local UICorner_12 = Instance.new("UICorner")
+UICorner_12.Parent = MinimalButton
+UICorner_12.CornerRadius = UDim.new(0, 5)
+
+local UIStroke_6 = Instance.new("UIStroke")
+UIStroke_6.Parent = MinimalButton
+UIStroke_6.Transparency = 0.5
+UIStroke_6.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+UIStroke_6.Thickness = 0.5
+UIStroke_6.Color = Color3.fromRGB(86, 86, 86)
+
+local CloseButton = Instance.new("TextButton")
+CloseButton.Name = "CloseButton"
+CloseButton.Parent = Header
+CloseButton.BorderSizePixel = 0
+CloseButton.TextSize = 12
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.BackgroundColor3 = Color3.fromRGB(38, 38, 38)
+CloseButton.FontFace = Font.new("rbxasset://fonts/families/Arial.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+CloseButton.BackgroundTransparency = 0.5
+CloseButton.Size = UDim2.new(0, 20, 0, 20)
+CloseButton.Text = "🫪"
+CloseButton.Position = UDim2.new(0, 245, 0, 4)
+
+local UICorner_13 = Instance.new("UICorner")
+UICorner_13.Parent = CloseButton
+UICorner_13.CornerRadius = UDim.new(0, 5)
+
+local UIStroke_7 = Instance.new("UIStroke")
+UIStroke_7.Parent = CloseButton
+UIStroke_7.Transparency = 0.5
+UIStroke_7.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+UIStroke_7.Thickness = 0.5
+UIStroke_7.Color = Color3.fromRGB(86, 86, 86)
+
+local UIGradient_4 = Instance.new("UIGradient")
+UIGradient_4.Parent = Header
+UIGradient_4.Color = ColorSequence.new({
+	ColorSequenceKeypoint.new(0.000, Color3.fromRGB(0, 0, 0)),
+	ColorSequenceKeypoint.new(0.500, Color3.fromRGB(255, 255, 255)),
+	ColorSequenceKeypoint.new(1.000, Color3.fromRGB(0, 0, 0))
+})
+
+local UIStroke2 = Instance.new("UIStroke")
+UIStroke2.Name = "UIStroke2"
+UIStroke2.Parent = Panel
+UIStroke2.Transparency = 0.85
+UIStroke2.Thickness = 4
+
+return ScreenGui, require
